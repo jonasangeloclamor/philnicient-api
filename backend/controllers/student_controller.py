@@ -44,7 +44,7 @@ class StudentList(Resource):
         except Exception as e:
             return {'message': str(e)}, 500
 
-@student_ns.route('/class/<string:class_id>')
+@student_ns.route('/classes/<string:class_id>')
 class StudentByClass(Resource):
     @student_ns.response(200, 'Success')
     @student_ns.response(204, 'No Content')
