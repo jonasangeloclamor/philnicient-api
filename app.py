@@ -7,9 +7,11 @@ from backend.controllers.student_controller import student_ns
 from backend.controllers.result_controller import result_ns
 from backend.controllers.student_assessment_controller import student_assessment_ns
 from backend.controllers.assessment_controller import assessment_ns
+from flask_cors import CORS
 
 # Initialize Flask app
 app = Flask(__name__)
+CORS(app)
 
 # Initialize JWT manager
 app.config['JWT_SECRET_KEY'] = 'philnits-api'
