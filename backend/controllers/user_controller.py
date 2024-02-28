@@ -24,44 +24,34 @@ user_login_model = user_ns.model('UserLoginDto', {
     'password': fields.String(required=True, description='Password of the User')
 })
 
-login_parser = reqparse.RequestParser()
-login_parser.add_argument('username', type=str, required=True, help='Username of the user')
-login_parser.add_argument('password', type=str, required=True, help='Password of the user')
-
 @user_ns.route('/login')
 class UserLogin(Resource):
-    @user_ns.expect(login_parser)
+    @user_ns.expect(user_login_model)
     @user_ns.response(200, 'Success')
     @user_ns.response(400, 'Bad Request')
+    @user_ns.response(401, 'Unauthorized')
     @user_ns.response(500, 'Internal Server Error')
     def post(self):
         """
         Logs in a user.
         """
         try:
-            args = login_parser.parse_args()
-            username = args['username']
-            password = args['password']
+            user_login_data = UserLoginDto(**request.json)
 
-            user = login_user(username, password)
+            if not user_login_data.username or not user_login_data.password:
+                return {'message': 'Username and password are required'}, 400
+
+            user = login_user(user_login_data.username, user_login_data.password)
             if user:
                 access_token = create_access_token(identity=user.id, expires_delta=ACCESS_TOKEN_EXPIRATION)
                 refresh_token = create_refresh_token(identity=user.id, expires_delta=REFRESH_TOKEN_EXPIRATION)             
                 return {
-                    'id': user.id,
-                    'firstname': user.firstname,
-                    'middlename': user.middlename,
-                    'lastname': user.lastname,
-                    'username': user.username,
-                    'password': user.password,
-                    'role': user.role,
-                    'datetimecreated': user.datetimecreated,
-                    'datetimeupdated': user.datetimeupdated,
+                    'user': user.__dict__,
                     'access_token': access_token,
                     'refresh_token': refresh_token
                 }, 200
             else:
-                return {'message': 'Invalid email or password'}, 400
+                return {'message': 'Invalid username or password'}, 401
         except Exception as e:
             return {'message': str(e)}, 500
 
