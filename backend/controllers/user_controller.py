@@ -1,10 +1,14 @@
+from datetime import timedelta
 from flask import request
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Namespace, Resource, fields, reqparse
 from backend.services.user_service import create_user_service, get_user_service, get_all_users_service, get_user_by_username_service, login_user
 from backend.data_components.dtos import UserCreationDto, UserLoginDto
 from flask_jwt_extended import create_access_token, create_refresh_token
 
 user_ns = Namespace('User', path='/api/users', description='Operations related to Users')
+
+ACCESS_TOKEN_EXPIRATION = timedelta(minutes=300)
+REFRESH_TOKEN_EXPIRATION = timedelta(days=7)
 
 user_model = user_ns.model('UserCreationDto', {
     'firstname': fields.String(required=True, description='First Name'),
@@ -20,9 +24,13 @@ user_login_model = user_ns.model('UserLoginDto', {
     'password': fields.String(required=True, description='Password of the User')
 })
 
+login_parser = reqparse.RequestParser()
+login_parser.add_argument('username', type=str, required=True, help='Username of the user')
+login_parser.add_argument('password', type=str, required=True, help='Password of the user')
+
 @user_ns.route('/login')
 class UserLogin(Resource):
-    @user_ns.expect(user_login_model)
+    @user_ns.expect(login_parser)
     @user_ns.response(200, 'Success')
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(500, 'Internal Server Error')
@@ -31,17 +39,29 @@ class UserLogin(Resource):
         Logs in a user.
         """
         try:
-            login_data = UserLoginDto(**request.json)
-            username = login_data.username
-            password = login_data.password
+            args = login_parser.parse_args()
+            username = args['username']
+            password = args['password']
 
             user = login_user(username, password)
             if user:
-                access_token = create_access_token(identity=user.id)
-                refresh_token = create_refresh_token(identity=user.id)
-                return {'access_token': access_token, 'refresh_token': refresh_token}, 200
+                access_token = create_access_token(identity=user.id, expires_delta=ACCESS_TOKEN_EXPIRATION)
+                refresh_token = create_refresh_token(identity=user.id, expires_delta=REFRESH_TOKEN_EXPIRATION)             
+                return {
+                    'id': user.id,
+                    'firstname': user.firstname,
+                    'middlename': user.middlename,
+                    'lastname': user.lastname,
+                    'username': user.username,
+                    'password': user.password,
+                    'role': user.role,
+                    'datetimecreated': user.datetimecreated,
+                    'datetimeupdated': user.datetimeupdated,
+                    'access_token': access_token,
+                    'refresh_token': refresh_token
+                }, 200
             else:
-                return {'message': 'Invalid username or password'}, 400
+                return {'message': 'Invalid email or password'}, 400
         except Exception as e:
             return {'message': str(e)}, 500
 
