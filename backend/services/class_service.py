@@ -1,4 +1,4 @@
-from backend.repositories.class_repository import create_class, get_class, get_all_classes, update_class, delete_class
+from backend.repositories.class_repository import create_class, get_class, get_all_classes, update_class, delete_class, get_class_by_code
 from backend.repositories.user_repository import is_teacher
 from backend.data_components.dtos import ClassCreationDto, ClassUpdationDto
 from backend.data_components.mappings import map_class_creation_dto_to_model
@@ -30,3 +30,6 @@ def update_class_service(class_id, class_data: ClassUpdationDto):
 
 def delete_class_service(class_id):
     return delete_class(class_id)
+
+def get_class_by_code_service(class_code):
+    return get_class_by_code(class_code)

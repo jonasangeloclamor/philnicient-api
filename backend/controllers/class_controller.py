@@ -1,6 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.class_service import create_class_service, get_class_service, get_all_classes_service, update_class_service, delete_class_service
+from backend.services.class_service import create_class_service, get_class_service, get_all_classes_service, update_class_service, delete_class_service, get_class_by_code_service
 from backend.data_components.dtos import ClassCreationDto, ClassUpdationDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
@@ -108,6 +108,24 @@ class Class(Resource):
             if class_instance:
                 delete_class_service(class_id)
                 return {'message': 'Class deleted successfully'}, 200
+            else:
+                return {'message': 'Class not found'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@class_ns.route('/code/<string:class_code>')
+class ClassByCode(Resource):
+    @class_ns.response(200, 'Success')
+    @class_ns.response(404, 'Not Found')
+    @class_ns.response(500, 'Internal Server Error')
+    def get(self, class_code):
+        """
+        Gets class details by class code.
+        """
+        try:
+            class_instance = get_class_by_code_service(class_code)
+            if class_instance:
+                return class_instance.__dict__, 200
             else:
                 return {'message': 'Class not found'}, 404
         except Exception as e:

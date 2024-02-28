@@ -36,3 +36,11 @@ def delete_class(class_id):
 def has_class(class_id):
     class_instance = get_class(class_id)
     return class_instance is not None
+
+def get_class_by_code(class_code):
+    query = db.collection('classes').where('classcode', '==', class_code).limit(1).stream()
+    for doc in query:
+        class_data = doc.to_dict()
+        class_data['id'] = doc.id
+        return Class(**class_data)
+    return None
