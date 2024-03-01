@@ -1,3 +1,4 @@
+import pytz
 from datetime import datetime
 
 class StringUtil:
@@ -6,15 +7,14 @@ class StringUtil:
     """
 
     @staticmethod
-    def get_current_datetime():
+    def current_ph_time():
         """
-        Gets the current datetime in the format 'yyyy-MM-dd HH:mm:ss'.
+        Gets the current datetime in the format 'yyyy-MM-dd HH:mm:ss' in Philippine Timezone.
         
         Returns:
-            str: The current datetime string.
+            str: The current datetime string in Philippine Timezone.
         """
-        time = datetime.now()
+        ph_timezone = pytz.timezone('Asia/Manila')
+        current_datetime = datetime.now(ph_timezone)
         format = "%Y-%m-%d %H:%M:%S"
-        current_datetime = time.strftime(format)
-
-        return current_datetime
+        return current_datetime.strftime(format)

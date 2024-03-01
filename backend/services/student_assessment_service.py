@@ -24,5 +24,5 @@ def update_student_assessment_service(student_assessment_id, student_assessment_
     existing_student_assessment = get_student_assessment(student_assessment_id)
     for key, value in student_assessment_data.__dict__.items():
         setattr(existing_student_assessment, key, value)
-    existing_student_assessment.datetimeupdated = StringUtil.get_current_datetime()
+    existing_student_assessment.datetimeupdated = StringUtil.current_ph_time()
     update_student_assessment(student_assessment_id, existing_student_assessment.__dict__)

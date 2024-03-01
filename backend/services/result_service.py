@@ -24,7 +24,7 @@ def update_result_service(result_id, result_details: ResultUpdationDto):
     existing_result = get_result(result_id)
     for key, value in result_details.__dict__.items():
         setattr(existing_result, key, value)
-    existing_result.datetimeupdated = StringUtil.get_current_datetime()
+    existing_result.datetimeupdated = StringUtil.current_ph_time()
     update_result(result_id, existing_result.__dict__)
 
 def get_result_by_student_id_service(student_id):
