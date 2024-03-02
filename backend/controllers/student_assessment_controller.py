@@ -1,6 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.student_assessment_service import create_student_assessment_service, get_student_assessment_service, get_all_student_assessments_service, update_student_assessment_service
+from backend.services.student_assessment_service import create_student_assessment_service, get_student_assessment_service, get_all_student_assessments_service, update_student_assessment_service, get_student_assessment_id_by_student_id_service
 from backend.data_components.dtos import StudentAssessmentCreationDto, StudentAssessmentUpdationDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
@@ -19,6 +19,7 @@ update_student_assessment_model = student_assessment_ns.model('StudentAssessment
 class StudentAssessmentList(Resource):
     @student_assessment_ns.expect(student_assessment_model)
     @student_assessment_ns.response(201, 'Created')
+    @student_assessment_ns.response(400, 'Bad Request')
     @student_assessment_ns.response(500, 'Internal Server Error')
     @jwt_required()
     @student_assessment_ns.doc(security="jsonWebToken")
@@ -30,6 +31,8 @@ class StudentAssessmentList(Resource):
             student_assessment_data = StudentAssessmentCreationDto(**request.json)
             student_assessment = create_student_assessment_service(student_assessment_data)
             return student_assessment.__dict__, 201
+        except ValueError as ve:
+            return {'message': str(ve)}, 400
         except Exception as e:
             return {'message': str(e)}, 500
 
@@ -88,6 +91,26 @@ class StudentAssessment(Resource):
 
             update_student_assessment_service(student_assessment_id, student_assessment_data)
             return {'message': 'Student assessment updated successfully'}, 200
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@student_assessment_ns.route('/students/<string:student_id>')
+class StudentAssessmentByStudent(Resource):
+    @student_assessment_ns.response(200, 'Success')
+    @student_assessment_ns.response(404, 'Not Found')
+    @student_assessment_ns.response(500, 'Internal Server Error')
+    @jwt_required()
+    @student_assessment_ns.doc(security="jsonWebToken")
+    def get(self, student_id):
+        """
+        Gets student assessment ID by student ID.
+        """
+        try:
+            student_assessment_id = get_student_assessment_id_by_student_id_service(student_id)
+            if student_assessment_id:
+                return {'student_assessment_id': student_assessment_id}, 200
+            else:
+                return {'message': 'Student assessment not found for the given student ID'}, 404
         except Exception as e:
             return {'message': str(e)}, 500
         

@@ -31,3 +31,15 @@ def update_student_assessment(student_assessment_id, student_assessment):
 def has_student_assessment_id(student_assessment_id):
     student_assessment = get_student_assessment(student_assessment_id)
     return student_assessment is not None
+
+def get_student_assessment_id_by_student_id(student_id):
+    query = db.collection('student_assessments').where('student_id', '==', student_id).limit(1)
+    result = query.stream()
+    for doc in result:
+        return doc.id
+    return None
+
+def has_student_assessment(student_id):
+    query = db.collection('student_assessments').where('student_id', '==', student_id).limit(1)
+    result = query.stream()
+    return len(list(result)) > 0
