@@ -1,5 +1,6 @@
 from backend.firebase_setup.firebase_config import db
 from backend.data_components.models import User
+from backend.utils.string_util import StringUtil
 
 def create_user(user):
     doc_ref = db.collection('users').document()
@@ -24,8 +25,32 @@ def get_all_users():
         users.append(User(**user_data))
     return users
 
+def get_user_by_email(email):
+    query = db.collection('users').where('email', '==', email).limit(1)
+    docs = query.stream()
+
+    for doc in docs:
+        return User(**doc.to_dict())
+
+    return None
+
 def get_user_by_username(username):
     query = db.collection('users').where('username', '==', username).limit(1)
+    docs = query.stream()
+
+    for doc in docs:
+        return User(**doc.to_dict())
+
+    return None
+
+def get_user_by_username_or_email(username_or_email):
+    query = db.collection('users').where('username', '==', username_or_email).limit(1)
+    docs = query.stream()
+
+    for doc in docs:
+        return User(**doc.to_dict())
+
+    query = db.collection('users').where('email', '==', username_or_email).limit(1)
     docs = query.stream()
 
     for doc in docs:
@@ -40,3 +65,13 @@ def is_teacher(user_id):
 def is_student(user_id):
     user = get_user(user_id)
     return user is not None and user.role == 'Student'
+
+def update_user_password(user_id, new_password):
+    user = get_user(user_id)
+    if user:
+        user.password = new_password
+        user.datetimeupdated = StringUtil.current_ph_time()
+        doc_ref = db.collection('users').document(user_id)
+        doc_ref.update({'password': new_password, 'datetimeupdated': user.datetimeupdated})
+    else:
+        return None
