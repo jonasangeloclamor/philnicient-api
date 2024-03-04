@@ -42,9 +42,6 @@ def login_user(user_login_data: UserLoginDto):
             return user
     return None
 
-def get_user_by_email_service(email):
-    return get_user_by_email(email)
-
 def update_user_password_service(email, new_password):
     user = get_user_by_email_service(email)
     if user:
