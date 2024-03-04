@@ -1,9 +1,10 @@
 class User:
-    def __init__(self, id, firstname, middlename, lastname, username, password, role, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, firstname, middlename, lastname, email, username, password, role, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.firstname = firstname
         self.middlename = middlename
         self.lastname = lastname
+        self.email = email
         self.username = username
         self.password = password
         self.role = role
@@ -28,7 +29,7 @@ class Student:
         self.datetimeupdated = datetimeupdated
 
 class Result:
-    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, student_id, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, basic_theory_score, computer_systems_score, technical_elements_score, development_techniques_score, project_management_score, service_management_score, system_strategy_score, management_strategy_score, corporate_legal_affairs_score, student_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.major_category = major_category
         self.number_of_items = number_of_items
@@ -36,20 +37,29 @@ class Result:
         self.total_time_taken = total_time_taken
         self.average_cri = average_cri
         self.cri_criteria = cri_criteria
+        self.basic_theory_score = basic_theory_score
+        self.computer_systems_score = computer_systems_score
+        self.technical_elements_score = technical_elements_score
+        self.development_techniques_score = development_techniques_score
+        self.project_management_score = project_management_score
+        self.service_management_score = service_management_score
+        self.system_strategy_score = system_strategy_score
+        self.management_strategy_score = management_strategy_score
+        self.corporate_legal_affairs_score = corporate_legal_affairs_score
         self.student_id = student_id
-        self.datetimecreated = datetimecreated
-        self.datetimeupdated = datetimeupdated
-
-class StudentAssessment:
-    def __init__(self, id, student_id, assessments=None, datetimecreated=None, datetimeupdated=None):
-        self.id = id
-        self.student_id = student_id
-        self.assessments = assessments if assessments else []
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated
 
 class Assessment:
-    def __init__(self, id, question, figure, choices, answer, major_category, student_answer, student_cri, is_for_review, time, student_assessment_id, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, student_id, questions=None, datetimecreated=None, datetimeupdated=None):
+        self.id = id
+        self.student_id = student_id
+        self.questions = questions if questions else []
+        self.datetimecreated = datetimecreated
+        self.datetimeupdated = datetimeupdated
+
+class Question:
+    def __init__(self, id, question, figure, choices, answer, major_category, student_answer, student_cri, is_for_review, time, assessment_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.question = question
         self.figure = figure
@@ -60,6 +70,6 @@ class Assessment:
         self.student_cri = student_cri
         self.is_for_review = is_for_review
         self.time = time
-        self.student_assessment_id = student_assessment_id
+        self.assessment_id = assessment_id
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated

@@ -5,8 +5,8 @@ from backend.controllers.user_controller import user_ns
 from backend.controllers.class_controller import class_ns
 from backend.controllers.student_controller import student_ns
 from backend.controllers.result_controller import result_ns
-from backend.controllers.student_assessment_controller import student_assessment_ns
 from backend.controllers.assessment_controller import assessment_ns
+from backend.controllers.question_controller import question_ns
 from flask_cors import CORS
 
 # Initialize Flask app
@@ -25,8 +25,8 @@ api.add_namespace(user_ns)
 api.add_namespace(class_ns)
 api.add_namespace(student_ns)
 api.add_namespace(result_ns)
-api.add_namespace(student_assessment_ns)
 api.add_namespace(assessment_ns)
+api.add_namespace(question_ns)
 
 if __name__ == '__main__':
     app.run(debug=True)
