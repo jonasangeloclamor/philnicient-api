@@ -88,6 +88,10 @@ class UserList(Resource):
             if existing_user:
                 return {'message': 'User with the same username already exists'}, 409
             
+            existing_user_by_email = get_user_by_email_service(user_data.email)
+            if existing_user_by_email:
+                return {'message': 'User with the same email address already exists'}, 409
+            
             user = create_user_service(user_data)
             return user.__dict__, 201
         except Exception as e:
