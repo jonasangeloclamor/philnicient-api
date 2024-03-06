@@ -31,3 +31,9 @@ def update_question(question_id, question):
 def delete_question(question_id):
     doc_ref = db.collection('questions').document(question_id)
     doc_ref.delete()
+
+def delete_questions_by_assessment_id(assessment_id):
+    docs = db.collection('questions').where('assessment_id', '==', assessment_id).stream()
+    for doc in docs:
+        doc.reference.delete()
+        
