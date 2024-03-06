@@ -1,6 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.assessment_service import create_assessment_service, get_assessment_service, get_all_assessments_service, update_assessment_service, get_assessment_id_by_student_id_service
+from backend.services.assessment_service import create_assessment_service, get_assessment_service, get_all_assessments_service, update_assessment_service, get_assessment_id_by_student_id_service, delete_assessment_service
 from backend.data_components.dtos import AssessmentCreationDto, AssessmentUpdationDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
@@ -91,6 +91,23 @@ class Assessment(Resource):
 
             update_assessment_service(assessment_id, assessment_data)
             return {'message': 'Assessment updated successfully'}, 200
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+    @assessment_ns.response(200, 'Success')
+    @assessment_ns.response(404, 'Not Found')
+    @assessment_ns.response(500, 'Internal Server Error')
+    def delete(self, assessment_id):
+        """
+        Deletes assessment details by ID.
+        """
+        try:
+            assessment = get_assessment_service(assessment_id)
+            if not assessment:
+                return {'message': 'Assessment not found'}, 404
+
+            delete_assessment_service(assessment_id)
+            return {'message': 'Assessment deleted successfully'}, 200
         except Exception as e:
             return {'message': str(e)}, 500
 

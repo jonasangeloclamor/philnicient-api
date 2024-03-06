@@ -43,3 +43,12 @@ def has_assessment(student_id):
     query = db.collection('assessments').where('student_id', '==', student_id).limit(1)
     result = query.stream()
     return len(list(result)) > 0
+
+def delete_assessment(assessment_id):
+    doc_ref = db.collection('assessments').document(assessment_id)
+    doc_ref.delete()
+
+def delete_questions_by_assessment_id(assessment_id):
+    docs = db.collection('questions').where('assessment_id', '==', assessment_id).stream()
+    for doc in docs:
+        doc.reference.delete()
