@@ -1,5 +1,6 @@
-from backend.repositories.assessment_repository import create_assessment, get_assessment, get_all_assessments, update_assessment, get_assessment_id_by_student_id, has_assessment, has_assessment_id, delete_questions_by_assessment_id, delete_assessment
+from backend.repositories.assessment_repository import create_assessment, get_assessment, get_all_assessments, update_assessment, get_assessment_id_by_student_id, has_assessment, has_assessment_id, delete_assessment
 from backend.repositories.student_repository import has_student_id
+from backend.repositories.question_repository import delete_questions_by_assessment_id
 from backend.data_components.dtos import AssessmentCreationDto, AssessmentUpdationDto
 from backend.data_components.mappings import map_assessment_creation_dto_to_model
 from backend.utils.string_util import StringUtil

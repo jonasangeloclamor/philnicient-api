@@ -36,3 +36,6 @@ def get_result_by_student_id(student_id):
         return Result(**doc.to_dict())
 
     return None
+
+def delete_result(result_id):
+    db.collection('results').document(result_id).delete()

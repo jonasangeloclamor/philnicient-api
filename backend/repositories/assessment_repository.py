@@ -47,8 +47,3 @@ def has_assessment(student_id):
 def delete_assessment(assessment_id):
     doc_ref = db.collection('assessments').document(assessment_id)
     doc_ref.delete()
-
-def delete_questions_by_assessment_id(assessment_id):
-    docs = db.collection('questions').where('assessment_id', '==', assessment_id).stream()
-    for doc in docs:
-        doc.reference.delete()
