@@ -1,4 +1,4 @@
-from backend.repositories.question_repository import create_question, get_question, get_all_questions, update_question
+from backend.repositories.question_repository import create_question, get_question, get_all_questions, update_question, delete_question
 from backend.repositories.assessment_repository import has_assessment_id, get_assessment, update_assessment
 from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto
 from backend.data_components.mappings import map_question_creation_dto_to_model
@@ -57,3 +57,14 @@ def update_question_service(question_id, question_data: QuestionUpdationDto):
         new_assessment.questions.append(question_id)
     
     update_assessment(question_data.assessment_id, new_assessment.__dict__)
+
+def delete_question_service(question_id):
+    question = get_question(question_id)
+    
+    if question.assessment_id:
+        assessment = get_assessment(question.assessment_id)
+        if assessment:
+            assessment.questions = [qid for qid in assessment.questions if qid != question_id]
+            update_assessment(question.assessment_id, assessment.__dict__)
+    
+    delete_question(question_id)

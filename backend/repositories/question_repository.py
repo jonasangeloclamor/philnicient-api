@@ -27,3 +27,7 @@ def get_all_questions():
 def update_question(question_id, question):
     doc_ref = db.collection('questions').document(question_id)
     doc_ref.update(question)
+
+def delete_question(question_id):
+    doc_ref = db.collection('questions').document(question_id)
+    doc_ref.delete()

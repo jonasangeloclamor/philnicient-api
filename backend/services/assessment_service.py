@@ -1,4 +1,4 @@
-from backend.repositories.assessment_repository import create_assessment, get_assessment, get_all_assessments, update_assessment, get_assessment_id_by_student_id, has_assessment
+from backend.repositories.assessment_repository import create_assessment, get_assessment, get_all_assessments, update_assessment, get_assessment_id_by_student_id, has_assessment, has_assessment_id, delete_questions_by_assessment_id, delete_assessment
 from backend.repositories.student_repository import has_student_id
 from backend.data_components.dtos import AssessmentCreationDto, AssessmentUpdationDto
 from backend.data_components.mappings import map_assessment_creation_dto_to_model
@@ -33,3 +33,8 @@ def update_assessment_service(assessment_id, assessment_data: AssessmentUpdation
 
 def get_assessment_id_by_student_id_service(student_id):
     return get_assessment_id_by_student_id(student_id)
+
+def delete_assessment_service(assessment_id):
+    if has_assessment_id(assessment_id):
+        delete_questions_by_assessment_id(assessment_id)
+    delete_assessment(assessment_id)

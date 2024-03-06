@@ -1,6 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.question_service import create_question_service, get_question_service, get_all_questions_service, update_question_service
+from backend.services.question_service import create_question_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service
 from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
@@ -106,6 +106,25 @@ class Question(Resource):
 
             update_question_service(question_id, question_data)
             return {'message': 'Question updated successfully'}, 200
+        except Exception as e:
+            return {'message': str(e)}, 500
+    
+    @question_ns.response(200, 'Success')
+    @question_ns.response(404, 'Not Found')
+    @question_ns.response(500, 'Internal Server Error')  
+    @jwt_required()
+    @question_ns.doc(security="jsonWebToken")
+    def delete(self, question_id):
+        """
+        Deletes question details by ID.
+        """
+        try:
+            question = get_question_service(question_id)
+            if not question:
+                return {'message': 'Question not found'}, 404
+
+            delete_question_service(question_id)
+            return {'message': 'Question deleted successfully'}, 200
         except Exception as e:
             return {'message': str(e)}, 500
         
