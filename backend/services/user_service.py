@@ -43,7 +43,7 @@ def login_user(user_login_data: UserLoginDto):
     return None
 
 def update_user_password_service(email, new_password):
-    user = get_user_by_email_service(email)
+    user = get_user_by_email(email)
     if user:
         hashed_password = hash_password(new_password)
         user.password = hashed_password
