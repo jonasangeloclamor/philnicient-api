@@ -14,11 +14,11 @@ app = Flask(__name__)
 CORS(app)
 
 # Initialize JWT manager
-app.config['JWT_SECRET_KEY'] = 'philnits-api'
+app.config['JWT_SECRET_KEY'] = 'philnicient-api'
 jwt = JWTManager(app)
 
 # Initialize API with Swagger UI
-api = Api(app, version='1.0', title='PhilNITS FE Proficiency API', description='Access a comprehensive suite of tools for management purposes with our API.')
+api = Api(app, version='1.0', title='Philnicient API', description="A RESTful API for assessing BSCS students' proficiency in PhilNITS FE exam categories.")
 
 # Add namespaces to API
 api.add_namespace(user_ns)
