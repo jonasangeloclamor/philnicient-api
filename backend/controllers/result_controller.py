@@ -63,7 +63,7 @@ result_prediction_model = result_ns.model('ResultPredictionDto', {
     'average_cri': fields.Float(required=True, description='Average CRI')
 })
 
-@result_ns.route('/predict')
+@result_ns.route('/predict-cri-criteria')
 class ResultPrediction(Resource):
     @result_ns.expect(result_prediction_model)
     @result_ns.response(200, 'Success')
