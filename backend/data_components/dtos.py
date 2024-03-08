@@ -76,6 +76,14 @@ class ResultUpdationDto:
         self.corporate_legal_affairs_score = corporate_legal_affairs_score
         self.student_id = student_id
 
+class ResultPredictionDto:
+    def __init__(self, major_category, number_of_items, total_score, total_time_taken, average_cri):
+        self.major_category = major_category
+        self.number_of_items = number_of_items
+        self.total_score = total_score
+        self.total_time_taken = total_time_taken
+        self.average_cri = average_cri
+
 class AssessmentCreationDto:
     def __init__(self, student_id):
         self.student_id = student_id
