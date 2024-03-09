@@ -24,15 +24,6 @@ result_model = result_ns.model('ResultCreationDto', {
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
     'average_cri': fields.Float(required=True, description='Average CRI'),
     'cri_criteria': fields.String(required=True, description='CRI Criteria'),
-    'basic_theory_score': fields.Integer(required=True, description='Basic Theory Score'),
-    'computer_systems_score': fields.Integer(required=True, description='Computer Systems Score'),
-    'technical_elements_score': fields.Integer(required=True, description='Technical Elements Score'),
-    'development_techniques_score': fields.Integer(required=True, description='Development Techniques Score'),
-    'project_management_score': fields.Integer(required=True, description='Project Management Score'),
-    'service_management_score': fields.Integer(required=True, description='Service Management Score'),
-    'system_strategy_score': fields.Integer(required=True, description='System Strategy Score'),
-    'management_strategy_score': fields.Integer(required=True, description='Management Strategy Score'),
-    'corporate_legal_affairs_score': fields.Integer(required=True, description='Corporate Legal Affairs Score'),
     'student_id': fields.String(required=True, description='Student ID')
 })
 
@@ -43,15 +34,6 @@ update_result_model = result_ns.model('ResultUpdationDto', {
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
     'average_cri': fields.Float(required=True, description='Average CRI'),
     'cri_criteria': fields.String(required=True, description='CRI Criteria'),
-    'basic_theory_score': fields.Integer(required=True, description='Basic Theory Score'),
-    'computer_systems_score': fields.Integer(required=True, description='Computer Systems Score'),
-    'technical_elements_score': fields.Integer(required=True, description='Technical Elements Score'),
-    'development_techniques_score': fields.Integer(required=True, description='Development Techniques Score'),
-    'project_management_score': fields.Integer(required=True, description='Project Management Score'),
-    'service_management_score': fields.Integer(required=True, description='Service Management Score'),
-    'system_strategy_score': fields.Integer(required=True, description='System Strategy Score'),
-    'management_strategy_score': fields.Integer(required=True, description='Management Strategy Score'),
-    'corporate_legal_affairs_score': fields.Integer(required=True, description='Corporate Legal Affairs Score'),
     'student_id': fields.String(required=True, description='Student ID')
 })
 

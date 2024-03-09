@@ -29,7 +29,7 @@ class Student:
         self.datetimeupdated = datetimeupdated
 
 class Result:
-    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, basic_theory_score, computer_systems_score, technical_elements_score, development_techniques_score, project_management_score, service_management_score, system_strategy_score, management_strategy_score, corporate_legal_affairs_score, student_id, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, student_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.major_category = major_category
         self.number_of_items = number_of_items
@@ -37,15 +37,6 @@ class Result:
         self.total_time_taken = total_time_taken
         self.average_cri = average_cri
         self.cri_criteria = cri_criteria
-        self.basic_theory_score = basic_theory_score
-        self.computer_systems_score = computer_systems_score
-        self.technical_elements_score = technical_elements_score
-        self.development_techniques_score = development_techniques_score
-        self.project_management_score = project_management_score
-        self.service_management_score = service_management_score
-        self.system_strategy_score = system_strategy_score
-        self.management_strategy_score = management_strategy_score
-        self.corporate_legal_affairs_score = corporate_legal_affairs_score
         self.student_id = student_id
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated
