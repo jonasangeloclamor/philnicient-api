@@ -47,3 +47,7 @@ def has_assessment(student_id):
 def delete_assessment(assessment_id):
     doc_ref = db.collection('assessments').document(assessment_id)
     doc_ref.delete()
+
+def is_assessment_for_student(assessment_id, student_id):
+    assessment = get_assessment(assessment_id)
+    return assessment and assessment.student_id == student_id
