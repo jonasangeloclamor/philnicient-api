@@ -1,4 +1,4 @@
-from backend.repositories.student_repository import create_student, get_student, get_all_students, delete_student, get_students_by_class_id
+from backend.repositories.student_repository import create_student, get_student, get_all_students, delete_student, get_students_by_class_id, is_student_in_class
 from backend.repositories.class_repository import has_class
 from backend.repositories.user_repository import is_student
 from backend.repositories.assessment_repository import get_assessment_id_by_student_id, has_assessment_id, delete_assessment
@@ -40,3 +40,6 @@ def delete_student_service(student_id):
 
 def get_students_by_class_id_service(class_id):
     return get_students_by_class_id(class_id)
+
+def is_student_in_class_service(student_id, class_id):
+    return is_student_in_class(student_id, class_id)
