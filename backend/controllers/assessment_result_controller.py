@@ -9,11 +9,29 @@ assessment_result_ns = Namespace('AssessmentResult', path='/api/assessment_resul
 
 assessment_result_model = assessment_result_ns.model('AssessmentResultCreationDto', {
     'total_score': fields.Integer(required=True, description='Total Score'),
+    'basic_theory_score': fields.Integer(required=True, description='Basic Theory Score'),
+    'computer_systems_score': fields.Integer(required=True, description='Computer Systems Score'),
+    'technical_elements_score': fields.Integer(required=True, description='Technical Elements Score'),
+    'development_techniques_score': fields.Integer(required=True, description='Development Techniques Score'),
+    'project_management_score': fields.Integer(required=True, description='Project Management Score'),
+    'service_management_score': fields.Integer(required=True, description='Service Management Score'),
+    'system_strategy_score': fields.Integer(required=True, description='System Strategy Score'),
+    'management_strategy_score': fields.Integer(required=True, description='Management Strategy Score'),
+    'corporate_legal_affairs_score': fields.Integer(required=True, description='Corporate Legal Affairs Score'),
     'student_id': fields.String(required=True, description='Student ID')
 })
 
 update_assessment_result_model = assessment_result_ns.model('AssessmentResultUpdationDto', {
     'total_score': fields.Integer(required=True, description='Total Score'),
+    'basic_theory_score': fields.Integer(required=True, description='Basic Theory Score'),
+    'computer_systems_score': fields.Integer(required=True, description='Computer Systems Score'),
+    'technical_elements_score': fields.Integer(required=True, description='Technical Elements Score'),
+    'development_techniques_score': fields.Integer(required=True, description='Development Techniques Score'),
+    'project_management_score': fields.Integer(required=True, description='Project Management Score'),
+    'service_management_score': fields.Integer(required=True, description='Service Management Score'),
+    'system_strategy_score': fields.Integer(required=True, description='System Strategy Score'),
+    'management_strategy_score': fields.Integer(required=True, description='Management Strategy Score'),
+    'corporate_legal_affairs_score': fields.Integer(required=True, description='Corporate Legal Affairs Score'),
     'student_id': fields.String(required=True, description='Student ID')
 })
 
