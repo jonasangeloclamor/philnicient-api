@@ -67,13 +67,31 @@ class ModelResultPredictionDto:
         self.average_cri = average_cri
 
 class AssessmentResultCreationDto:
-    def __init__(self, total_score, student_id):
+    def __init__(self, total_score, basic_theory_score, computer_systems_score, technical_elements_score, development_techniques_score, project_management_score, service_management_score, system_strategy_score, management_strategy_score, corporate_legal_affairs_score, student_id):
         self.total_score = total_score
+        self.basic_theory_score = basic_theory_score
+        self.computer_systems_score = computer_systems_score
+        self.technical_elements_score = technical_elements_score
+        self.development_techniques_score = development_techniques_score
+        self.project_management_score = project_management_score
+        self.service_management_score = service_management_score
+        self.system_strategy_score = system_strategy_score
+        self.management_strategy_score = management_strategy_score
+        self.corporate_legal_affairs_score = corporate_legal_affairs_score
         self.student_id = student_id
 
 class AssessmentResultUpdationDto:
-    def __init__(self, total_score=None, student_id=None):
+    def __init__(self, total_score=None, basic_theory_score=None, computer_systems_score=None, technical_elements_score=None, development_techniques_score=None, project_management_score=None, service_management_score=None, system_strategy_score=None, management_strategy_score=None, corporate_legal_affairs_score=None, student_id=None):
         self.total_score = total_score
+        self.basic_theory_score = basic_theory_score
+        self.computer_systems_score = computer_systems_score
+        self.technical_elements_score = technical_elements_score
+        self.development_techniques_score = development_techniques_score
+        self.project_management_score = project_management_score
+        self.service_management_score = service_management_score
+        self.system_strategy_score = system_strategy_score
+        self.management_strategy_score = management_strategy_score
+        self.corporate_legal_affairs_score = corporate_legal_affairs_score
         self.student_id = student_id
 
 class AssessmentCreationDto:

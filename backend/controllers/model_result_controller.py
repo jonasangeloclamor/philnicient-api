@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.model_result_service import create_model_result_service, get_model_result_service, get_all_model_results_service, update_model_result_service, get_model_result_by_student_id_service
+from backend.services.model_result_service import create_model_result_service, get_model_result_service, get_all_model_results_service, update_model_result_service, get_model_result_by_student_id_service, get_model_result_by_student_id_and_major_category_service, get_model_result_by_major_category_service
 from backend.data_components.dtos import ModelResultCreationDto, ModelResultUpdationDto, ModelResultPredictionDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
@@ -18,7 +18,7 @@ knn_model = joblib.load('model/knnmodel.pkl')
 scaler = joblib.load('model/scaler.pkl')
 
 result_model = model_result_ns.model('ModelResultCreationDto', {
-    'major_category': fields.String(required=True, description='Major Category'),
+    'major_category': fields.Integer(required=True, description='Major Category'),
     'number_of_items': fields.Integer(required=True, description='Number of Items'),
     'total_score': fields.Integer(required=True, description='Total Score'),
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
@@ -28,7 +28,7 @@ result_model = model_result_ns.model('ModelResultCreationDto', {
 })
 
 update_result_model = model_result_ns.model('ModelResultUpdationDto', {
-    'major_category': fields.String(required=True, description='Major Category'),
+    'major_category': fields.Integer(required=True, description='Major Category'),
     'number_of_items': fields.Integer(required=True, description='Number of Items'),
     'total_score': fields.Integer(required=True, description='Total Score'),
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
@@ -87,6 +87,7 @@ class ModelResultPrediction(Resource):
 class ModelResultList(Resource):
     @model_result_ns.expect(result_model)
     @model_result_ns.response(201, 'Created')
+    @model_result_ns.response(400, 'Bad Request')
     @model_result_ns.response(500, 'Internal Server Error')
     @jwt_required()
     @model_result_ns.doc(security="jsonWebToken")
@@ -98,6 +99,8 @@ class ModelResultList(Resource):
             model_result_details = ModelResultCreationDto(**request.json)
             model_result = create_model_result_service(model_result_details)
             return model_result.__dict__, 201
+        except ValueError as ve:
+            return {'message': str(ve)}, 400
         except Exception as e:
             return {'message': str(e)}, 500
 
@@ -157,6 +160,8 @@ class ModelResult(Resource):
 
             update_model_result_service(model_result_id, model_result_details)
             return {'message': 'Model result updated successfully'}, 200
+        except ValueError as ve:
+            return {'message': str(ve)}, 400
         except Exception as e:
             return {'message': str(e)}, 500
 
@@ -177,5 +182,35 @@ class ModelResultByStudent(Resource):
                 return model_result.__dict__, 200
             else:
                 return {'message': 'Model result not found for the specified student'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+        
+@model_result_ns.route('/students/<string:student_id>/major-categories/<int:major_category>')
+class ModelResultByStudentAndMajorCategory(Resource):
+    @model_result_ns.response(200, 'Success')
+    @model_result_ns.response(404, 'Not Found')
+    @model_result_ns.response(500, 'Internal Server Error')
+    @jwt_required()
+    @model_result_ns.doc(security="jsonWebToken")
+    def get(self, student_id, major_category):
+        """
+        Gets model result details by student ID and major category.
+        """
+        try:
+            student_details = get_model_result_by_student_id_service(student_id)
+            major_category_details = get_model_result_by_major_category_service(major_category)
+            
+            if not student_details and not major_category_details:
+                return {'message': 'Both student and major category not found'}, 404
+            
+            if not student_details:
+                return {'message': 'Model result not found for the specified student'}, 404
+            
+            if not major_category_details:
+                return {'message': 'Model result not found for the specified major category'}, 404
+            
+            model_result = get_model_result_by_student_id_and_major_category_service(student_id, major_category)
+            if model_result:
+                return model_result.__dict__, 200
         except Exception as e:
             return {'message': str(e)}, 500
