@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.assessment_result_service import create_assessment_result_service, get_assessment_result_service, get_all_assessment_results_service, get_assessment_result_by_student_id_service
-from backend.data_components.dtos import AssessmentResultCreationDto
+from backend.services.assessment_result_service import create_assessment_result_service, get_assessment_result_service, get_all_assessment_results_service, update_assessment_result_service, get_assessment_result_by_student_id_service
+from backend.data_components.dtos import AssessmentResultCreationDto, AssessmentResultUpdationDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
 
@@ -12,10 +12,16 @@ assessment_result_model = assessment_result_ns.model('AssessmentResultCreationDt
     'student_id': fields.String(required=True, description='Student ID')
 })
 
+update_assessment_result_model = assessment_result_ns.model('AssessmentResultUpdationDto', {
+    'total_score': fields.Integer(required=True, description='Total Score'),
+    'student_id': fields.String(required=True, description='Student ID')
+})
+
 @assessment_result_ns.route('')
 class AssessmentResultList(Resource):
     @assessment_result_ns.expect(assessment_result_model)
     @assessment_result_ns.response(201, 'Created')
+    @assessment_result_ns.response(400, 'Bad Request')
     @assessment_result_ns.response(500, 'Internal Server Error')
     @jwt_required()
     @assessment_result_ns.doc(security="jsonWebToken")
@@ -27,6 +33,8 @@ class AssessmentResultList(Resource):
             assessment_result_details = AssessmentResultCreationDto(**request.json)
             assessment_result = create_assessment_result_service(assessment_result_details)
             return assessment_result.__dict__, 201
+        except ValueError as ve:
+            return {'message': str(ve)}, 400
         except Exception as e:
             return {'message': str(e)}, 500
 
@@ -61,6 +69,31 @@ class AssessmentResult(Resource):
                 return assessment_result.__dict__, 200
             else:
                 return {'message': 'Assessment result not found'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+    
+    @assessment_result_ns.expect(update_assessment_result_model)
+    @assessment_result_ns.response(200, 'Success')
+    @assessment_result_ns.response(400, 'Bad Request')
+    @assessment_result_ns.response(404, 'Not Found')
+    @assessment_result_ns.response(500, 'Internal Server Error')
+    @jwt_required()
+    @assessment_result_ns.doc(security="jsonWebToken")
+    def put(self, assessment_result_id):
+        """
+        Updates assessment result details by ID.
+        """
+        try:
+            if not request.json or any(value == "" for value in request.json.values()):
+                return {'message': 'Request body cannot be empty or contain empty values'}, 400
+
+            assessment_result_details = AssessmentResultUpdationDto(**request.json)           
+            assessment_result = get_assessment_result_service(assessment_result_id)           
+            if not assessment_result:
+                return {'message': 'Assessment result not found'}, 404
+
+            update_assessment_result_service(assessment_result_id, assessment_result_details)
+            return {'message': 'Assessment result updated successfully'}, 200
         except Exception as e:
             return {'message': str(e)}, 500
 

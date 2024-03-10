@@ -24,6 +24,10 @@ def get_all_assessment_results():
         assessment_results.append(AssessmentResult(**assessment_result_details))
     return assessment_results
 
+def update_assessment_result(assessment_result_id, assessment_result):
+    doc_ref = db.collection('assessment_results').document(assessment_result_id)
+    doc_ref.update(assessment_result)
+
 def get_assessment_result_by_student_id(student_id):
     query = db.collection('assessment_results').where('student_id', '==', student_id).limit(1)
     docs = query.stream()
@@ -32,3 +36,7 @@ def get_assessment_result_by_student_id(student_id):
         return AssessmentResult(**doc.to_dict())
 
     return None
+
+def has_assessment_result_by_student_id(student_id):
+    assessment_result = get_assessment_result_by_student_id(student_id)
+    return assessment_result is not None

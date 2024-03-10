@@ -11,11 +11,11 @@ from flask_jwt_extended import jwt_required
 
 model_result_ns = Namespace('ModelResult', path='/api/model_results', description='Operations related to Model Results', authorizations=authorizations)
 
-file_path = 'model\Categorized_Shuffled_Dataset.csv'
+file_path = 'model/Categorized_Shuffled_Dataset.csv'
 dataset = pd.read_csv(file_path)
 
-knn_model = joblib.load('model\knnmodel.pkl')
-scaler = joblib.load('model\scaler.pkl')
+knn_model = joblib.load('model/knnmodel.pkl')
+scaler = joblib.load('model/scaler.pkl')
 
 result_model = model_result_ns.model('ModelResultCreationDto', {
     'major_category': fields.String(required=True, description='Major Category'),
