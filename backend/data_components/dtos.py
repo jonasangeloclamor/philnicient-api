@@ -38,7 +38,7 @@ class StudentCreationDto:
         self.class_id = class_id
         self.student_id = student_id
 
-class ResultCreationDto:
+class ModelResultCreationDto:
     def __init__(self, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, student_id):
         self.major_category = major_category
         self.number_of_items = number_of_items
@@ -48,7 +48,7 @@ class ResultCreationDto:
         self.cri_criteria = cri_criteria
         self.student_id = student_id
 
-class ResultUpdationDto:
+class ModelResultUpdationDto:
     def __init__(self, major_category=None, number_of_items=None, total_score=None, total_time_taken=None, average_cri=None, cri_criteria=None, student_id=None):
         self.major_category = major_category
         self.number_of_items = number_of_items
@@ -58,13 +58,18 @@ class ResultUpdationDto:
         self.cri_criteria = cri_criteria
         self.student_id = student_id
 
-class ResultPredictionDto:
+class ModelResultPredictionDto:
     def __init__(self, major_category, number_of_items, total_score, total_time_taken, average_cri):
         self.major_category = major_category
         self.number_of_items = number_of_items
         self.total_score = total_score
         self.total_time_taken = total_time_taken
         self.average_cri = average_cri
+
+class AssessmentResultCreationDto:
+    def __init__(self, total_score, student_id):
+        self.total_score = total_score
+        self.student_id = student_id
 
 class AssessmentCreationDto:
     def __init__(self, student_id):

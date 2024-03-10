@@ -28,7 +28,7 @@ class Student:
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated
 
-class Result:
+class ModelResult:
     def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, student_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.major_category = major_category
@@ -37,6 +37,14 @@ class Result:
         self.total_time_taken = total_time_taken
         self.average_cri = average_cri
         self.cri_criteria = cri_criteria
+        self.student_id = student_id
+        self.datetimecreated = datetimecreated
+        self.datetimeupdated = datetimeupdated
+
+class AssessmentResult:
+    def __init__(self, id, total_score, student_id, datetimecreated=None, datetimeupdated=None):
+        self.id = id
+        self.total_score = total_score
         self.student_id = student_id
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated
