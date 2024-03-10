@@ -39,4 +39,26 @@ def get_model_result_by_student_id(student_id):
 
 def delete_model_result(model_result_id):
     db.collection('model_results').document(model_result_id).delete()
+
+def get_model_result_by_student_id_and_major_category(student_id, major_category):
+    query = db.collection('model_results').where('student_id', '==', student_id).where('major_category', '==', major_category).limit(1)
+    docs = query.stream()
+
+    for doc in docs:
+        return ModelResult(**doc.to_dict())
+
+    return None
+
+def get_number_of_model_results_for_student(student_id):
+    query = db.collection('model_results').where('student_id', '==', student_id)
+    return len(query.get())
+
+def get_model_result_by_major_category(major_category):
+    query = db.collection('model_results').where('major_category', '==', major_category).limit(1)
+    docs = query.stream()
+
+    for doc in docs:
+        return ModelResult(**doc.to_dict())
+
+    return None
    
