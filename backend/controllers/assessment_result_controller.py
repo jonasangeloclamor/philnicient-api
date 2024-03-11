@@ -8,6 +8,7 @@ from flask_jwt_extended import jwt_required
 assessment_result_ns = Namespace('AssessmentResult', path='/api/assessment_results', description='Operations related to Assessment Results', authorizations=authorizations)
 
 assessment_result_model = assessment_result_ns.model('AssessmentResultCreationDto', {
+    'total_items': fields.Integer(required=True, description='Total Items'),
     'total_score': fields.Integer(required=True, description='Total Score'),
     'basic_theory_score': fields.Integer(required=True, description='Basic Theory Score'),
     'computer_systems_score': fields.Integer(required=True, description='Computer Systems Score'),
@@ -22,6 +23,7 @@ assessment_result_model = assessment_result_ns.model('AssessmentResultCreationDt
 })
 
 update_assessment_result_model = assessment_result_ns.model('AssessmentResultUpdationDto', {
+    'total_items': fields.Integer(required=True, description='Total Items'),
     'total_score': fields.Integer(required=True, description='Total Score'),
     'basic_theory_score': fields.Integer(required=True, description='Basic Theory Score'),
     'computer_systems_score': fields.Integer(required=True, description='Computer Systems Score'),
