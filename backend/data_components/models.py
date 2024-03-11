@@ -42,8 +42,9 @@ class ModelResult:
         self.datetimeupdated = datetimeupdated
 
 class AssessmentResult:
-    def __init__(self, id, total_score, basic_theory_score, computer_systems_score, technical_elements_score, development_techniques_score, project_management_score, service_management_score, system_strategy_score, management_strategy_score, corporate_legal_affairs_score, student_id, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, total_items, total_score, basic_theory_score, computer_systems_score, technical_elements_score, development_techniques_score, project_management_score, service_management_score, system_strategy_score, management_strategy_score, corporate_legal_affairs_score, student_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
+        self.total_items = total_items
         self.total_score = total_score
         self.basic_theory_score = basic_theory_score
         self.computer_systems_score = computer_systems_score
