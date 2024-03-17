@@ -1,6 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.assessment_result_service import create_assessment_result_service, get_assessment_result_service, get_all_assessment_results_service, update_assessment_result_service, get_assessment_result_by_student_id_service
+from backend.services.assessment_result_service import create_assessment_result_service, get_assessment_result_service, get_all_assessment_results_service, update_assessment_result_service, get_assessment_result_by_student_id_service, delete_assessment_result_service
 from backend.data_components.dtos import AssessmentResultCreationDto, AssessmentResultUpdationDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
@@ -114,6 +114,25 @@ class AssessmentResult(Resource):
 
             update_assessment_result_service(assessment_result_id, assessment_result_details)
             return {'message': 'Assessment result updated successfully'}, 200
+        except Exception as e:
+            return {'message': str(e)}, 
+
+    @assessment_result_ns.response(200, 'Success')
+    @assessment_result_ns.response(404, 'Not Found')
+    @assessment_result_ns.response(500, 'Internal Server Error')
+    @jwt_required()
+    @assessment_result_ns.doc(security="jsonWebToken")
+    def delete(self, assessment_result_id):
+        """
+        Deletes assessment result details by ID.
+        """
+        try:
+            assessment_result = get_assessment_result_service(assessment_result_id) 
+            if assessment_result:
+                delete_assessment_result_service(assessment_result_id)
+                return {'message': 'Assessment result deleted successfully'}, 200
+            else:
+                return {'message': 'Assessment result not found'}, 404
         except Exception as e:
             return {'message': str(e)}, 500
 
