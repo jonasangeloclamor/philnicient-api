@@ -40,3 +40,6 @@ def get_assessment_result_by_student_id(student_id):
 def has_assessment_result_by_student_id(student_id):
     assessment_result = get_assessment_result_by_student_id(student_id)
     return assessment_result is not None
+
+def delete_assessment_result(assessment_result_id):
+    db.collection('assessment_results').document(assessment_result_id).delete()
