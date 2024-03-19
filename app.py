@@ -9,13 +9,14 @@ from backend.controllers.assessment_result_controller import assessment_result_n
 from backend.controllers.assessment_controller import assessment_ns
 from backend.controllers.question_controller import question_ns
 from flask_cors import CORS
+from security_config import Config
 
 # Initialize Flask app
 app = Flask(__name__)
+app.config.from_object(Config)
 CORS(app)
 
 # Initialize JWT manager
-app.config['JWT_SECRET_KEY'] = 'philnicient-api'
 jwt = JWTManager(app)
 
 # Initialize API with Swagger UI
