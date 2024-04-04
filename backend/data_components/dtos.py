@@ -39,23 +39,25 @@ class StudentCreationDto:
         self.student_id = student_id
 
 class ModelResultCreationDto:
-    def __init__(self, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, accuracy, student_id):
+    def __init__(self, major_category, number_of_items, total_score, total_time_taken, average_cri, understanding_level, cri_criteria, accuracy, student_id):
         self.major_category = major_category
         self.number_of_items = number_of_items
         self.total_score = total_score
         self.total_time_taken = total_time_taken
         self.average_cri = average_cri
+        self.understanding_level = understanding_level
         self.cri_criteria = cri_criteria
         self.accuracy = accuracy
         self.student_id = student_id
 
 class ModelResultUpdationDto:
-    def __init__(self, major_category=None, number_of_items=None, total_score=None, total_time_taken=None, average_cri=None, cri_criteria=None, accuracy=None, student_id=None):
+    def __init__(self, major_category=None, number_of_items=None, total_score=None, total_time_taken=None, average_cri=None, understanding_level=None, cri_criteria=None, accuracy=None, student_id=None):
         self.major_category = major_category
         self.number_of_items = number_of_items
         self.total_score = total_score
         self.total_time_taken = total_time_taken
         self.average_cri = average_cri
+        self.understanding_level = understanding_level
         self.cri_criteria = cri_criteria
         self.accuracy = accuracy
         self.student_id = student_id
