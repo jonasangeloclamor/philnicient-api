@@ -8,6 +8,7 @@ from backend.services.model_result_service import create_model_result_service, g
 from backend.data_components.dtos import ModelResultCreationDto, ModelResultUpdationDto, ModelResultPredictionDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
+from fuzzy_logic.fuzzy_logic_functions import determine_understanding
 
 model_result_ns = Namespace('ModelResult', path='/api/model_results', description='Operations related to Model Results', authorizations=authorizations)
 
@@ -77,9 +78,14 @@ class ModelResultPrediction(Resource):
 
             accuracy = accuracy_score(y_train, y_pred_train)
 
+            score_val = prediction_inputs.total_score
+            cri_val = prediction_inputs.average_cri
+            understanding_level = determine_understanding(score_val, cri_val)
+
             return {
                 'predicted_cri_criteria': predicted_cri_criteria[0],
-                'accuracy': accuracy
+                'accuracy': accuracy,
+                'understanding_level': understanding_level
             }, 200
 
         except Exception as e:
