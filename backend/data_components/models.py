@@ -29,13 +29,14 @@ class Student:
         self.datetimeupdated = datetimeupdated
 
 class ModelResult:
-    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, cri_criteria, accuracy, student_id, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, understanding_level, cri_criteria, accuracy, student_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.major_category = major_category
         self.number_of_items = number_of_items
         self.total_score = total_score
         self.total_time_taken = total_time_taken
         self.average_cri = average_cri
+        self.understanding_level = understanding_level
         self.cri_criteria = cri_criteria
         self.accuracy = accuracy
         self.student_id = student_id

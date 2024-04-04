@@ -24,6 +24,7 @@ result_model = model_result_ns.model('ModelResultCreationDto', {
     'total_score': fields.Integer(required=True, description='Total Score'),
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
     'average_cri': fields.Float(required=True, description='Average CRI'),
+    'understanding_level': fields.Float(required=True, description='Understanding Level'),
     'cri_criteria': fields.String(required=True, description='CRI Criteria'),
     'accuracy': fields.Float(required=True, description='Accuracy'),
     'student_id': fields.String(required=True, description='Student ID')
@@ -35,6 +36,7 @@ update_result_model = model_result_ns.model('ModelResultUpdationDto', {
     'total_score': fields.Integer(required=True, description='Total Score'),
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
     'average_cri': fields.Float(required=True, description='Average CRI'),
+    'understanding_level': fields.Float(required=True, description='Understanding Level'),
     'cri_criteria': fields.String(required=True, description='CRI Criteria'),
     'accuracy': fields.Float(required=True, description='Accuracy'),
     'student_id': fields.String(required=True, description='Student ID')
