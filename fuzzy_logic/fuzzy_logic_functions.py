@@ -11,9 +11,9 @@ cri = ctrl.Antecedent(np.arange(0, 5.1, 0.1), 'cri')
 understanding = ctrl.Consequent(np.arange(0, 101, 1), 'understanding')
 
 # Define membership functions for score
-score['low'] = fuzz.trimf(score.universe, [0, 0, 2])
-score['medium'] = fuzz.trimf(score.universe, [1, 4, 6])
-score['high'] = fuzz.trimf(score.universe, [5, 7, 7])
+score['low'] = fuzz.trapmf(score.universe, [0, 0, 1, 2])
+score['medium'] = fuzz.trapmf(score.universe, [2, 2, 5, 5])
+score['high'] = fuzz.trapmf(score.universe, [6, 6, 7, 7])
 
 # Define membership functions for cri
 cri['low'] = fuzz.trimf(cri.universe, [0, 0, 2.5])
@@ -46,7 +46,7 @@ def determine_understanding(score_val, cri_val):
     return understanding_sim.output['understanding']
 
 # Test the function with sample inputs
-score_val = 2
-cri_val = 3.2
+score_val = 1
+cri_val = 5
 understanding_level = determine_understanding(score_val, cri_val)
 print("Understanding Level:", understanding_level)
