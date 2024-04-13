@@ -9,11 +9,14 @@ from backend.controllers.assessment_result_controller import assessment_result_n
 from backend.controllers.assessment_controller import assessment_ns
 from backend.controllers.question_controller import question_ns
 from flask_cors import CORS
-from security_config import Config
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config.from_object(Config)
+env_config = os.getenv("PROD_APP_SETTINGS", "security_config.DevelopmentConfig")
+app.config.from_object(env_config)
 CORS(app)
 
 # Initialize JWT manager
