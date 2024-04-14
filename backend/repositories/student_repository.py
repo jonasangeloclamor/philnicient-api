@@ -39,3 +39,7 @@ def get_students_by_class_id(class_id):
         student_data['id'] = doc.id
         students.append(Student(**student_data))
     return students
+
+def is_student_in_class(student_id, class_id):
+    student = get_student(student_id)
+    return student and student.class_id == class_id
