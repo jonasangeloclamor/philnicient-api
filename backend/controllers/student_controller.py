@@ -3,6 +3,7 @@ from flask_restx import Namespace, Resource, fields
 from backend.services.student_service import create_student_service, get_student_service, get_all_students_service, delete_student_service, get_students_by_class_id_service, is_student_in_class_service
 from backend.services.assessment_service import is_assessment_for_student_service, get_assessment_service
 from backend.services.class_service import get_class_service
+from backend.services.user_service import check_if_user_is_student_service
 from backend.data_components.dtos import StudentCreationDto
 from security_config import authorizations
 from flask_jwt_extended import jwt_required
@@ -103,7 +104,7 @@ class Student(Resource):
         except Exception as e:
             return {'message': str(e)}, 500
         
-@student_ns.route('/<string:student_id>/class/<string:class_id>')
+@student_ns.route('/<string:user_id>/class/<string:class_id>')
 class StudentClass(Resource):
     @student_ns.response(200, 'Success')
     @student_ns.response(401, 'Unauthorized')
@@ -111,12 +112,12 @@ class StudentClass(Resource):
     @student_ns.response(500, 'Internal Server Error')
     @jwt_required()
     @student_ns.doc(security="jsonWebToken")
-    def get(self, student_id, class_id):
+    def get(self, user_id, class_id):
         """
-        Checks if the student belongs to the class.
+        Checks if the student with the specified user ID belongs to the class.
         """
         try:
-            student = get_student_service(student_id)
+            student = check_if_user_is_student_service(user_id)
             if not student:
                 return {'message': 'Student not found'}, 404
 
@@ -124,13 +125,18 @@ class StudentClass(Resource):
             if not class_info:
                 return {'message': 'Class not found'}, 404
 
-            if not is_student_in_class_service(student_id, class_id):
+            if is_student_in_class_service(user_id, class_id):
+                return {'message': 'Student belongs to this class'}, 200
+            else:
                 return {'message': 'Student does not belong to this class'}, 401
-            return {'message': 'Student belongs to this class'}, 200
+            
+        except ValueError as e:
+            return {'message': str(e)}, 404
+        
         except Exception as e:
             return {'message': str(e)}, 500
 
-@student_ns.route('/<string:student_id>/assessment/<string:assessment_id>')
+@student_ns.route('/<string:user_id>/assessment/<string:assessment_id>')
 class StudentAssessment(Resource):
     @student_ns.response(200, 'Success')
     @student_ns.response(401, 'Unauthorized')
@@ -138,22 +144,27 @@ class StudentAssessment(Resource):
     @student_ns.response(500, 'Internal Server Error')
     @jwt_required()
     @student_ns.doc(security="jsonWebToken")
-    def get(self, student_id, assessment_id):
+    def get(self, user_id, assessment_id):
         """
-        Checks if the assessment is for the student.
+        Checks if the assessment is for the student with the specified user ID.
         """
         try:
-            student = get_student_service(student_id)
+            student = check_if_user_is_student_service(user_id)
             if not student:
                 return {'message': 'Student not found'}, 404
 
             assessment_info = get_assessment_service(assessment_id)
             if not assessment_info:
                 return {'message': 'Assessment not found'}, 404
-            
-            if not is_assessment_for_student_service(assessment_id, student_id):
+
+            if is_assessment_for_student_service(assessment_id, user_id):
+                return {'message': 'Assessment is for this student'}, 200
+            else:
                 return {'message': 'Assessment is not for this student'}, 401
-            return {'message': 'Assessment is for this student'}, 200
+            
+        except ValueError as e:
+            return {'message': str(e)}, 404
+        
         except Exception as e:
             return {'message': str(e)}, 500
         

@@ -1,4 +1,4 @@
-from backend.repositories.user_repository import create_user, get_user, get_all_users, get_user_by_username, get_user_by_email, get_user_by_username_or_email, update_user_password
+from backend.repositories.user_repository import create_user, get_user, get_all_users, get_user_by_username, get_user_by_email, get_user_by_username_or_email, update_user_password, is_student
 from backend.data_components.dtos import UserCreationDto, UserLoginDto
 from backend.data_components.mappings import map_user_creation_dto_to_model
 import bcrypt
@@ -50,3 +50,6 @@ def update_user_password_service(email, new_password):
         update_user_password(user.id, hashed_password)
     else:
         return None
+    
+def check_if_user_is_student_service(user_id):
+    return is_student(user_id)
