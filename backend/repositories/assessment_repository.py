@@ -48,6 +48,21 @@ def delete_assessment(assessment_id):
     doc_ref = db.collection('assessments').document(assessment_id)
     doc_ref.delete()
 
-def is_assessment_for_student(assessment_id, student_id):
-    assessment = get_assessment(assessment_id)
-    return assessment and assessment.student_id == student_id
+def is_assessment_for_student(assessment_id, user_id):
+    user_doc = db.collection('users').document(user_id).get()
+    if user_doc.exists:
+        user = user_doc.to_dict()
+        if user['role'] != 'Student':
+            return False
+    else:
+        return False
+    
+    assessment_doc = db.collection('assessments').document(assessment_id).get()
+    if assessment_doc.exists:
+        assessment = assessment_doc.to_dict()
+        student_docs = db.collection('students').where('student_id', '==', user_id).stream()
+        for doc in student_docs:
+            student = doc.to_dict()
+            if assessment['student_id'] == student['id']:
+                return True
+    return False

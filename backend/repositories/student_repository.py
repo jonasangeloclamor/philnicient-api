@@ -40,6 +40,10 @@ def get_students_by_class_id(class_id):
         students.append(Student(**student_data))
     return students
 
-def is_student_in_class(student_id, class_id):
-    student = get_student(student_id)
-    return student and student.class_id == class_id
+def is_student_in_class(user_id, class_id):
+    student_docs = db.collection('students').where('student_id', '==', user_id).stream()
+    for doc in student_docs:
+        student = doc.to_dict()
+        if student['class_id'] == class_id:
+            return True
+    return False

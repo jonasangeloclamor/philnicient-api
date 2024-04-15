@@ -41,5 +41,7 @@ def delete_student_service(student_id):
 def get_students_by_class_id_service(class_id):
     return get_students_by_class_id(class_id)
 
-def is_student_in_class_service(student_id, class_id):
-    return is_student_in_class(student_id, class_id)
+def is_student_in_class_service(user_id, class_id):
+    if not is_student(user_id):
+        raise ValueError("Specified user_id does not correspond to a student.")
+    return is_student_in_class(user_id, class_id)
