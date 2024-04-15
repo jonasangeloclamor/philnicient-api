@@ -1,6 +1,7 @@
 from backend.repositories.assessment_repository import create_assessment, get_assessment, get_all_assessments, update_assessment, get_assessment_id_by_student_id, has_assessment, has_assessment_id, delete_assessment, is_assessment_for_student
 from backend.repositories.student_repository import has_student_id
 from backend.repositories.question_repository import delete_questions_by_assessment_id
+from backend.repositories.user_repository import is_student
 from backend.data_components.dtos import AssessmentCreationDto, AssessmentUpdationDto
 from backend.data_components.mappings import map_assessment_creation_dto_to_model
 from backend.utils.string_util import StringUtil
@@ -40,5 +41,7 @@ def delete_assessment_service(assessment_id):
         delete_questions_by_assessment_id(assessment_id)
     delete_assessment(assessment_id)
 
-def is_assessment_for_student_service(assessment_id, student_id):
-    return is_assessment_for_student(assessment_id, student_id)
+def is_assessment_for_student_service(assessment_id, user_id):
+    if not is_student(user_id):
+        raise ValueError("Specified user_id does not correspond to a student.")
+    return is_assessment_for_student(assessment_id, user_id)
