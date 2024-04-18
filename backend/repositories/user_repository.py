@@ -75,3 +75,6 @@ def update_user_password(user_id, new_password):
         doc_ref.update({'password': new_password, 'datetimeupdated': user.datetimeupdated})
     else:
         return None
+    
+def delete_user(user_id):
+    db.collection('users').document(user_id).delete()

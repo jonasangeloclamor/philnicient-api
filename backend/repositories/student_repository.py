@@ -47,3 +47,17 @@ def is_student_in_class(user_id, class_id):
         if student['class_id'] == class_id:
             return True
     return False
+
+def delete_student_by_user_id(user_id):
+    student_docs = db.collection('students').where('student_id', '==', user_id).stream()
+    for doc in student_docs:
+        doc.reference.delete()
+
+def get_students_by_student_id(student_id):
+    students = []
+    docs = db.collection('students').where('student_id', '==', student_id).stream()
+    for doc in docs:
+        student_data = doc.to_dict()
+        student_data['id'] = doc.id
+        students.append(Student(**student_data))
+    return students

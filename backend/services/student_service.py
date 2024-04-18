@@ -3,7 +3,7 @@ from backend.repositories.class_repository import has_class
 from backend.repositories.user_repository import is_student
 from backend.repositories.assessment_repository import get_assessment_id_by_student_id, has_assessment_id, delete_assessment
 from backend.repositories.question_repository import delete_questions_by_assessment_id
-from backend.repositories.model_result_repository import get_model_result_by_student_id, delete_model_result
+from backend.repositories.assessment_result_repository import get_assessment_result_by_student_id, delete_assessment_result
 from backend.data_components.dtos import StudentCreationDto
 from backend.data_components.mappings import map_student_creation_dto_to_model
 
@@ -32,9 +32,9 @@ def delete_student_service(student_id):
         delete_questions_by_assessment_id(assessment_id)
         delete_assessment(assessment_id)
     
-    result = get_model_result_by_student_id(student_id)
-    if result:
-        delete_model_result(result.id)
+    assessment_result = get_assessment_result_by_student_id(student_id)
+    if assessment_result:
+        delete_assessment_result(assessment_result.id)
 
     delete_student(student_id)
 
