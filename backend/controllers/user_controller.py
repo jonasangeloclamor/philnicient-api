@@ -1,15 +1,12 @@
-from datetime import timedelta
-from flask import request
+from flask import request, make_response
 from flask_restx import Namespace, Resource, fields
 from backend.services.user_service import create_user_service, get_user_service, get_all_users_service, get_user_by_username_service, get_user_by_email_service, login_user, update_user_password_service, delete_teacher_and_related_data_service, delete_student_and_related_data_service
 from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPasswordRequestDto, ForgotPasswordResetDto
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
+from security_config import authorizations
 
-user_ns = Namespace('User', path='/api/users', description='Operations related to Users')
-
-ACCESS_TOKEN_EXPIRATION = timedelta(minutes=300)
-REFRESH_TOKEN_EXPIRATION = timedelta(days=7)
+user_ns = Namespace('User', path='/api/users', description='Operations related to Users', authorizations=authorizations)
 
 user_model = user_ns.model('UserCreationDto', {
     'firstname': fields.String(required=True, description='First Name'),
@@ -45,7 +42,7 @@ class UserLogin(Resource):
     @user_ns.response(500, 'Internal Server Error')
     def post(self):
         """
-        Logs in a user.
+        Logs in a user and sets cookies for user ID, role, and JWT.
         """
         try:
             user_login_data = UserLoginDto(**request.json)
@@ -55,17 +52,51 @@ class UserLogin(Resource):
 
             user = login_user(user_login_data)
             if user:
-                access_token = create_access_token(identity=user.id, expires_delta=ACCESS_TOKEN_EXPIRATION)
-                refresh_token = create_refresh_token(identity=user.id, expires_delta=REFRESH_TOKEN_EXPIRATION)             
-                return {
-                    'user': user.__dict__,
-                    'access_token': access_token,
-                    'refresh_token': refresh_token
-                }, 200
+                access_token = create_access_token(identity=user.id)
+                refresh_token = create_refresh_token(identity=user.id)
+                response = make_response({
+                    'message': 'Logged in successfully'
+                }, 200)
+                response.set_cookie('jwt_token', access_token, httponly=True, secure=True)
+                response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True)
+                response.set_cookie('user_id', user.id, httponly=True, secure=True)
+                response.set_cookie('role', user.role, httponly=True, secure=True)
+                return response
             else:
                 return {'message': 'Invalid username, email, or password'}, 401
         except Exception as e:
             return {'message': str(e)}, 500
+
+@user_ns.route('/logout')
+class UserLogout(Resource):
+    @user_ns.response(200, 'Success')
+    @user_ns.response(500, 'Internal Server Error')
+    def post(self):
+        """
+        Logs out a user by clearing the HTTP only cookies.
+        """
+        response = make_response({
+            'message': 'Logged out successfully'
+        }, 200)
+        response.set_cookie('jwt_token', '', expires=0)
+        response.set_cookie('refresh_token', '', expires=0)
+        response.set_cookie('user_id', '', expires=0)
+        response.set_cookie('role', '', expires=0)
+        return response
+
+@user_ns.route('/token/refresh')
+class TokenRefresh(Resource):
+    @jwt_required(refresh=True)
+    @user_ns.doc(security="jsonWebToken")
+    def post(self):
+        """
+        Refreshes an access token using the refresh token.
+        """
+        current_user = get_jwt_identity()
+        new_access_token = create_access_token(identity=current_user)
+        response = make_response({'message': 'Access token refreshed successfully'}, 200)
+        response.set_cookie('jwt_token', new_access_token, httponly=True, secure=True)
+        return response
 
 @user_ns.route('')
 class UserList(Resource):
