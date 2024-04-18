@@ -44,3 +44,12 @@ def get_class_by_code(class_code):
         class_data['id'] = doc.id
         return Class(**class_data)
     return None
+
+def get_all_classes_by_teacher_id(teacher_id):
+    classes = []
+    query = db.collection('classes').where('teacher_id', '==', teacher_id).stream()
+    for doc in query:
+        class_data = doc.to_dict()
+        class_data['id'] = doc.id
+        classes.append(Class(**class_data))
+    return classes
