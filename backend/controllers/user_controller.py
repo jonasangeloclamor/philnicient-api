@@ -1,7 +1,7 @@
 from datetime import timedelta
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.user_service import create_user_service, get_user_service, get_all_users_service, get_user_by_username_service, get_user_by_email_service, login_user, update_user_password_service
+from backend.services.user_service import create_user_service, get_user_service, get_all_users_service, get_user_by_username_service, get_user_by_email_service, login_user, update_user_password_service, delete_teacher_and_related_data_service, delete_student_and_related_data_service
 from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPasswordRequestDto, ForgotPasswordResetDto
 from flask_jwt_extended import create_access_token, create_refresh_token
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
@@ -128,6 +128,48 @@ class User(Resource):
                 return user.__dict__, 200
             else:
                 return {'message': 'User not found'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@user_ns.route('/<string:user_id>/delete-teacher')
+class DeleteTeacher(Resource):
+    @user_ns.response(200, 'Success')
+    @user_ns.response(404, 'Not Found')
+    @user_ns.response(500, 'Internal Server Error')
+    def delete(self, user_id):
+        """
+        Deletes teacher's details and related data by ID.
+        """
+        try:
+            user = get_user_service(user_id)
+            if user and user.role == "Teacher":
+                delete_teacher_and_related_data_service(user_id)
+                return {'message': 'Teacher deleted successfully'}, 200
+            else:
+                return {'message': 'Teacher not found'}, 404
+        except ValueError as e:
+            return {'message': str(e)}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@user_ns.route('/<string:user_id>/delete-student')
+class DeleteStudent(Resource):
+    @user_ns.response(200, 'Success')
+    @user_ns.response(404, 'Not Found')
+    @user_ns.response(500, 'Internal Server Error')
+    def delete(self, user_id):
+        """
+        Deletes student's details and related data by ID.
+        """
+        try:
+            user = get_user_service(user_id)
+            if user and user.role == "Student":
+                delete_student_and_related_data_service(user_id)
+                return {'message': 'Student deleted successfully'}, 200
+            else:
+                return {'message': 'Student not found'}, 404
+        except ValueError as e:
+            return {'message': str(e)}, 404
         except Exception as e:
             return {'message': str(e)}, 500
         

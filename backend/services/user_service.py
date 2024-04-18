@@ -1,4 +1,10 @@
-from backend.repositories.user_repository import create_user, get_user, get_all_users, get_user_by_username, get_user_by_email, get_user_by_username_or_email, update_user_password, is_student
+from backend.repositories.user_repository import create_user, get_user, get_all_users, get_user_by_username, get_user_by_email, get_user_by_username_or_email, update_user_password, is_student, delete_user, is_teacher
+from backend.repositories.class_repository import get_all_classes_by_teacher_id
+from backend.services.class_service import delete_class_service
+from backend.repositories.student_repository import get_students_by_student_id, delete_student
+from backend.repositories.assessment_repository import get_assessment_id_by_student_id, delete_assessment
+from backend.repositories.question_repository import delete_questions_by_assessment_id
+from backend.repositories.assessment_result_repository import get_assessment_result_by_student_id, delete_assessment_result
 from backend.data_components.dtos import UserCreationDto, UserLoginDto
 from backend.data_components.mappings import map_user_creation_dto_to_model
 import bcrypt
@@ -53,3 +59,30 @@ def update_user_password_service(email, new_password):
     
 def check_if_user_is_student_service(user_id):
     return is_student(user_id)
+
+def delete_teacher_and_related_data_service(user_id):
+    if not is_teacher(user_id):
+        raise ValueError("Specified user ID does not correspond to a teacher.")
+
+    classes = get_all_classes_by_teacher_id(user_id)   
+    for class_ in classes:
+        delete_class_service(class_.id)
+
+    delete_user(user_id)
+
+def delete_student_and_related_data_service(user_id):
+    user = get_user(user_id)
+    if user and is_student(user_id):
+        students = get_students_by_student_id(user_id)
+        for student in students:
+            student_id = student.id
+            delete_student(student_id)
+            assessment_id = get_assessment_id_by_student_id(student_id)
+            if assessment_id:
+                delete_questions_by_assessment_id(assessment_id)
+                delete_assessment(assessment_id)
+                assessment_result = get_assessment_result_by_student_id(student_id)
+                if assessment_result:
+                    delete_assessment_result(assessment_result.id)
+    
+    delete_user(user_id)
