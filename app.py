@@ -17,7 +17,7 @@ load_dotenv()
 app = Flask(__name__)
 env_config = os.getenv("PROD_APP_SETTINGS", "security_config.DevelopmentConfig")
 app.config.from_object(env_config)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 # Initialize JWT manager
 jwt = JWTManager(app)
