@@ -5,6 +5,7 @@ from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPa
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
 from security_config import authorizations
+from flask_cors import cross_origin
 
 user_ns = Namespace('User', path='/api/users', description='Operations related to Users', authorizations=authorizations)
 
@@ -40,6 +41,7 @@ class UserLogin(Resource):
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(401, 'Unauthorized')
     @user_ns.response(500, 'Internal Server Error')
+    @cross_origin(methods=['POST'], supports_credentials=True)
     def post(self):
         """
         Logs in a user and sets cookies for user ID, role, and JWT.
