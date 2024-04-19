@@ -5,7 +5,6 @@ from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPa
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
 from security_config import authorizations
-from flask_cors import cross_origin
 
 user_ns = Namespace('User', path='/api/users', description='Operations related to Users', authorizations=authorizations)
 
@@ -41,7 +40,6 @@ class UserLogin(Resource):
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(401, 'Unauthorized')
     @user_ns.response(500, 'Internal Server Error')
-    @cross_origin(methods=['POST'], supports_credentials=True, headers=['Content-Type', 'Authorization'], origins=['http://localhost:3000', 'https://philnicient.vercel.app'])
     def post(self):
         """
         Logs in a user and sets cookies for user ID, role, and JWT.
@@ -59,12 +57,11 @@ class UserLogin(Resource):
                 response = make_response({
                     'message': 'Logged in successfully'
                 }, 200)
-                response.headers['Access-Control-Allow-Credentials'] = True
-                response.set_cookie('jwt_token', access_token, httponly=True, secure=False, domain='127.0.0.1:5000')
-                response.set_cookie('refresh_token', refresh_token, httponly=True, secure=False, domain='127.0.0.1:5000')
-                response.set_cookie('user_id', user.id, httponly=True, secure=False, domain='127.0.0.1:5000')
-                response.set_cookie('role', user.role, httponly=True, secure=False, domain='127.0.0.1:5000')
-                return response, 200
+                response.set_cookie('jwt_token', access_token, httponly=True, secure=True, samesite='None', max_age=86400)
+                response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True, samesite='None', max_age=86400)
+                response.set_cookie('user_id', user.id, httponly=True, secure=True, samesite='None', max_age=86400)
+                response.set_cookie('role', user.role, httponly=True, secure=True, samesite='None', max_age=86400)
+                return response
             else:
                 return {'message': 'Invalid username, email, or password'}, 401
         except Exception as e:
@@ -100,6 +97,29 @@ class TokenRefresh(Resource):
         response = make_response({'message': 'Access token refreshed successfully'}, 200)
         response.set_cookie('jwt_token', new_access_token, httponly=True, secure=True)
         return response
+    
+@user_ns.route('/get-cookies')
+class GetCookies(Resource):
+    @user_ns.response(200, 'Success')
+    @user_ns.response(401, 'Unauthorized')
+    def get(self):
+        """
+        Retrieves all necessary cookies from the user's session.
+        """
+        jwt_token = request.cookies.get('jwt_token', None)
+        refresh_token = request.cookies.get('refresh_token', None)
+        user_id = request.cookies.get('user_id', None)
+        role = request.cookies.get('role', None)
+
+        if not jwt_token or not refresh_token or not user_id or not role:
+            return {'message': 'No valid session found'}, 401
+
+        return {
+            'jwt_token': jwt_token,
+            'refresh_token': refresh_token,
+            'user_id': user_id,
+            'role': role
+        }, 200
 
 @user_ns.route('')
 class UserList(Resource):
