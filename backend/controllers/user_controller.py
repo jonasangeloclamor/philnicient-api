@@ -5,7 +5,6 @@ from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPa
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
 from security_config import authorizations
-from flask_cors import cross_origin
 
 user_ns = Namespace('User', path='/api/users', description='Operations related to Users', authorizations=authorizations)
 
@@ -34,26 +33,17 @@ forgot_password_reset_model = user_ns.model('ForgotPasswordResetDto', {
     'password': fields.String(required=True, description='New Password')
 })
 
-@user_ns.route('/login', methods=['POST', 'OPTIONS'])
+@user_ns.route('/login')
 class UserLogin(Resource):
     @user_ns.expect(user_login_model)
     @user_ns.response(200, 'Success')
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(401, 'Unauthorized')
     @user_ns.response(500, 'Internal Server Error')
-    @cross_origin(methods=['POST', 'OPTIONS'], supports_credentials=True)
     def post(self):
         """
         Logs in a user and sets cookies for user ID, role, and JWT.
         """
-        if request.method == 'OPTIONS':
-            headers = {
-                'Access-Control-Allow-Origin': 'http://localhost:3000, https://philnicient.vercel.app',
-                'Access-Control-Allow-Methods': 'POST, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                'Access-Control-Allow-Credentials': 'true',
-            }
-            return ('', 200, headers)
         try:
             user_login_data = UserLoginDto(**request.json)
 
