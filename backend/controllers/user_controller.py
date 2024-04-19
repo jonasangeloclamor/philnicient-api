@@ -47,8 +47,13 @@ class UserLogin(Resource):
         Logs in a user and sets cookies for user ID, role, and JWT.
         """
         if request.method == 'OPTIONS':
-            return {'message': 'Preflight check successful'}, 200
-
+            headers = {
+                'Access-Control-Allow-Origin': 'http://localhost:3000, https://philnicient.vercel.app',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Credentials': 'true',
+            }
+            return ('', 200, headers)
         try:
             user_login_data = UserLoginDto(**request.json)
 
