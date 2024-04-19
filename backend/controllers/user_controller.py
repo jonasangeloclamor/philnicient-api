@@ -57,10 +57,10 @@ class UserLogin(Resource):
                 response = make_response({
                     'message': 'Logged in successfully'
                 }, 200)
-                response.set_cookie('jwt_token', access_token, httponly=True, secure=True)
-                response.set_cookie('refresh_token', refresh_token, httponly=True, secure=True)
-                response.set_cookie('user_id', user.id, httponly=True, secure=True)
-                response.set_cookie('role', user.role, httponly=True, secure=True)
+                response.set_cookie('jwt_token', access_token, httponly=True, secure=False)
+                response.set_cookie('refresh_token', refresh_token, httponly=True, secure=False)
+                response.set_cookie('user_id', user.id, httponly=True, secure=False)
+                response.set_cookie('role', user.role, httponly=True, secure=False)
                 return response
             else:
                 return {'message': 'Invalid username, email, or password'}, 401
