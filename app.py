@@ -17,9 +17,7 @@ load_dotenv()
 app = Flask(__name__)
 env_config = os.getenv("PROD_APP_SETTINGS", "security_config.DevelopmentConfig")
 app.config.from_object(env_config)
-
-# Enable CORS for the entire Flask app with specific origins
-CORS(app, origins=['http://localhost:3000', 'https://philnicient.vercel.app'], supports_credentials=True)
+CORS(app)
 
 # Initialize JWT manager
 jwt = JWTManager(app)
