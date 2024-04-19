@@ -34,18 +34,21 @@ forgot_password_reset_model = user_ns.model('ForgotPasswordResetDto', {
     'password': fields.String(required=True, description='New Password')
 })
 
-@user_ns.route('/login')
+@user_ns.route('/login', methods=['POST', 'OPTIONS'])
 class UserLogin(Resource):
     @user_ns.expect(user_login_model)
     @user_ns.response(200, 'Success')
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(401, 'Unauthorized')
     @user_ns.response(500, 'Internal Server Error')
-    @cross_origin(methods=['POST'], supports_credentials=True)
+    @cross_origin(methods=['POST', 'OPTIONS'], supports_credentials=True)
     def post(self):
         """
         Logs in a user and sets cookies for user ID, role, and JWT.
         """
+        if request.method == 'OPTIONS':
+            return {'message': 'Preflight check successful'}, 200
+
         try:
             user_login_data = UserLoginDto(**request.json)
 
