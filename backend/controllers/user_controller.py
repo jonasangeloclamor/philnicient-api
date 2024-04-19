@@ -5,6 +5,7 @@ from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPa
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
 from security_config import authorizations
+from flask_cors import cross_origin
 
 user_ns = Namespace('User', path='/api/users', description='Operations related to Users', authorizations=authorizations)
 
@@ -40,6 +41,7 @@ class UserLogin(Resource):
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(401, 'Unauthorized')
     @user_ns.response(500, 'Internal Server Error')
+    @cross_origin(methods=['POST'], supports_credentials=True, headers=['Content-Type', 'Authorization'], origins=['http://localhost:3000', 'https://philnicient.vercel.app'])
     def post(self):
         """
         Logs in a user and sets cookies for user ID, role, and JWT.
@@ -57,11 +59,12 @@ class UserLogin(Resource):
                 response = make_response({
                     'message': 'Logged in successfully'
                 }, 200)
-                response.set_cookie('jwt_token', access_token, httponly=True, secure=False)
-                response.set_cookie('refresh_token', refresh_token, httponly=True, secure=False)
-                response.set_cookie('user_id', user.id, httponly=True, secure=False)
-                response.set_cookie('role', user.role, httponly=True, secure=False)
-                return response
+                response.headers['Access-Control-Allow-Credentials'] = True
+                response.set_cookie('jwt_token', access_token, httponly=True, secure=False, domain='127.0.0.1:5000')
+                response.set_cookie('refresh_token', refresh_token, httponly=True, secure=False, domain='127.0.0.1:5000')
+                response.set_cookie('user_id', user.id, httponly=True, secure=False, domain='127.0.0.1:5000')
+                response.set_cookie('role', user.role, httponly=True, secure=False, domain='127.0.0.1:5000')
+                return response, 200
             else:
                 return {'message': 'Invalid username, email, or password'}, 401
         except Exception as e:
