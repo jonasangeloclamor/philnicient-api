@@ -78,10 +78,10 @@ class UserLogout(Resource):
         response = make_response({
             'message': 'Logged out successfully'
         }, 200)
-        response.set_cookie('jwt_token', '', expires=0)
-        response.set_cookie('refresh_token', '', expires=0)
-        response.set_cookie('user_id', '', expires=0)
-        response.set_cookie('role', '', expires=0)
+        response.set_cookie('jwt_token', '', expires=0, secure=True, samesite='None')
+        response.set_cookie('refresh_token', '', expires=0, secure=True, samesite='None')
+        response.set_cookie('user_id', '', expires=0, secure=True, samesite='None')
+        response.set_cookie('role', '', expires=0, secure=True, samesite='None')
         return response
 
 @user_ns.route('/token/refresh')
