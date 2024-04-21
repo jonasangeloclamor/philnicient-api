@@ -52,8 +52,8 @@ class UserLogin(Resource):
 
             user = login_user(user_login_data)
             if user:
-                access_token = create_access_token(identity=user.id)
-                refresh_token = create_refresh_token(identity=user.id)
+                access_token = create_access_token(identity=user.id, expires_delta=False)
+                refresh_token = create_refresh_token(identity=user.id, expires_delta=False)
                 return {
                     'user_id': user.id,
                     'role': user.role,
@@ -75,7 +75,7 @@ class TokenRefresh(Resource):
         """
         try:
             current_user = get_jwt_identity()
-            new_access_token = create_access_token(identity=current_user)
+            new_access_token = create_access_token(identity=current_user, expires_delta=False)
             return {'access_token': new_access_token}, 200
         except Exception as e:
             return {'message': str(e)}, 500
