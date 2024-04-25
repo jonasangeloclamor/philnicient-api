@@ -3,7 +3,7 @@ from flask_restx import Namespace, Resource, fields
 from backend.services.question_service import create_question_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service
 from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto
 from security_config import authorizations
-from flask_jwt_extended import jwt_required
+from backend.utils.auth import role_required
 
 question_ns = Namespace('Question', path='/api/questions', description='Operations related to Questions', authorizations=authorizations)
 
@@ -38,7 +38,7 @@ class QuestionList(Resource):
     @question_ns.expect(question_model)
     @question_ns.response(201, 'Created')
     @question_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Student')
     @question_ns.doc(security="jsonWebToken")
     def post(self):
         """
@@ -53,7 +53,9 @@ class QuestionList(Resource):
 
     @question_ns.response(200, 'Success')
     @question_ns.response(204, 'No Content')
-    @question_ns.response(500, 'Internal Server Error')  
+    @question_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student', 'Admin')
+    @question_ns.doc(security="jsonWebToken")
     def get(self):
         """
         Gets all questions.
@@ -72,6 +74,8 @@ class Question(Resource):
     @question_ns.response(200, 'Success')
     @question_ns.response(404, 'Not Found')
     @question_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student', 'Admin')
+    @question_ns.doc(security="jsonWebToken")
     def get(self, question_id):
         """
         Gets question details by ID.
@@ -89,7 +93,7 @@ class Question(Resource):
     @question_ns.response(200, 'Success')
     @question_ns.response(404, 'Not Found')
     @question_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Student', 'Admin')
     @question_ns.doc(security="jsonWebToken")
     def put(self, question_id):
         """
@@ -112,7 +116,7 @@ class Question(Resource):
     @question_ns.response(200, 'Success')
     @question_ns.response(404, 'Not Found')
     @question_ns.response(500, 'Internal Server Error')  
-    @jwt_required()
+    @role_required('Teacher', 'Student', 'Admin')
     @question_ns.doc(security="jsonWebToken")
     def delete(self, question_id):
         """

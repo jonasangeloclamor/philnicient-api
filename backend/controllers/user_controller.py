@@ -5,6 +5,7 @@ from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPa
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
 from security_config import authorizations
+from backend.utils.auth import role_required
 
 user_ns = Namespace('User', path='/api/users', description='Operations related to Users', authorizations=authorizations)
 
@@ -112,7 +113,9 @@ class UserList(Resource):
 
     @user_ns.response(200, 'Success')
     @user_ns.response(204, 'No Content')
-    @user_ns.response(500, 'Internal Server Error')    
+    @user_ns.response(500, 'Internal Server Error')
+    @role_required('Admin')
+    @user_ns.doc(security="jsonWebToken")     
     def get(self):
         """
         Gets all users.
@@ -131,6 +134,8 @@ class User(Resource):
     @user_ns.response(200, 'Success')
     @user_ns.response(404, 'Not Found')
     @user_ns.response(500, 'Internal Server Error')
+    @role_required('Admin')
+    @user_ns.doc(security="jsonWebToken") 
     def get(self, user_id):
         """
         Gets user details by ID.
@@ -149,6 +154,8 @@ class DeleteTeacher(Resource):
     @user_ns.response(200, 'Success')
     @user_ns.response(404, 'Not Found')
     @user_ns.response(500, 'Internal Server Error')
+    @role_required('Admin')
+    @user_ns.doc(security="jsonWebToken") 
     def delete(self, user_id):
         """
         Deletes teacher's details and related data by ID.
@@ -170,6 +177,8 @@ class DeleteStudent(Resource):
     @user_ns.response(200, 'Success')
     @user_ns.response(404, 'Not Found')
     @user_ns.response(500, 'Internal Server Error')
+    @role_required('Admin')
+    @user_ns.doc(security="jsonWebToken") 
     def delete(self, user_id):
         """
         Deletes student's details and related data by ID.
@@ -193,6 +202,8 @@ class ForgotPassword(Resource):
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(404, 'Not Found')
     @user_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student')
+    @user_ns.doc(security="jsonWebToken") 
     def post(self):
         """
         Sends a verification code to the provided email address for resetting the password.
@@ -220,6 +231,8 @@ class ResetPassword(Resource):
     @user_ns.response(200, 'Success')
     @user_ns.response(400, 'Bad Request')
     @user_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student')
+    @user_ns.doc(security="jsonWebToken") 
     def post(self):
         """
         Resets the password using the verification code sent to the email address.

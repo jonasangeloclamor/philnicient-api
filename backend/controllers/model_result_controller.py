@@ -7,8 +7,8 @@ from flask_restx import Namespace, Resource, fields
 from backend.services.model_result_service import create_model_result_service, get_model_result_service, get_all_model_results_service, update_model_result_service, get_model_result_by_student_id_service, get_model_result_by_student_id_and_major_category_service, get_model_result_by_major_category_service
 from backend.data_components.dtos import ModelResultCreationDto, ModelResultUpdationDto, ModelResultPredictionDto
 from security_config import authorizations
-from flask_jwt_extended import jwt_required
 from fuzzy_logic.fuzzy_logic_functions import determine_understanding
+from backend.utils.auth import role_required
 
 model_result_ns = Namespace('ModelResult', path='/api/model_results', description='Operations related to Model Results', authorizations=authorizations)
 
@@ -55,6 +55,8 @@ class ModelResultPrediction(Resource):
     @model_result_ns.expect(result_prediction_model)
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student', 'Admin')
+    @model_result_ns.doc(security="jsonWebToken")
     def post(self):
         """
         Predicts CRI criteria based on inputs.
@@ -99,7 +101,7 @@ class ModelResultList(Resource):
     @model_result_ns.response(201, 'Created')
     @model_result_ns.response(400, 'Bad Request')
     @model_result_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Student', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")
     def post(self):
         """
@@ -116,7 +118,9 @@ class ModelResultList(Resource):
 
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(204, 'No Content')
-    @model_result_ns.response(500, 'Internal Server Error')    
+    @model_result_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Admin')
+    @model_result_ns.doc(security="jsonWebToken")    
     def get(self):
         """
         Gets all model results.
@@ -135,6 +139,8 @@ class ModelResult(Resource):
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Admin')
+    @model_result_ns.doc(security="jsonWebToken")
     def get(self, model_result_id):
         """
         Gets model result details by ID.
@@ -153,7 +159,7 @@ class ModelResult(Resource):
     @model_result_ns.response(400, 'Bad Request')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")
     def put(self, model_result_id):
         """
@@ -180,7 +186,7 @@ class ModelResultByStudent(Resource):
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")
     def get(self, student_id):
         """
@@ -200,7 +206,7 @@ class ModelResultByStudentAndMajorCategory(Resource):
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")
     def get(self, student_id, major_category):
         """
