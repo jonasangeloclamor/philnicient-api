@@ -3,7 +3,7 @@ from flask_restx import Namespace, Resource, fields
 from backend.services.assessment_service import create_assessment_service, get_assessment_service, get_all_assessments_service, update_assessment_service, get_assessment_id_by_student_id_service, delete_assessment_service
 from backend.data_components.dtos import AssessmentCreationDto, AssessmentUpdationDto
 from security_config import authorizations
-from flask_jwt_extended import jwt_required
+from backend.utils.auth import role_required
 
 assessment_ns = Namespace('Assessment', path='/api/assessments', description='Operations related to Assessments', authorizations=authorizations)
 
@@ -21,7 +21,7 @@ class AssessmentList(Resource):
     @assessment_ns.response(201, 'Created')
     @assessment_ns.response(400, 'Bad Request')
     @assessment_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Student')
     @assessment_ns.doc(security="jsonWebToken")
     def post(self):
         """
@@ -38,7 +38,9 @@ class AssessmentList(Resource):
 
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(204, 'No Content')
-    @assessment_ns.response(500, 'Internal Server Error')  
+    @assessment_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Admin')
+    @assessment_ns.doc(security="jsonWebToken")
     def get(self):
         """
         Gets all assessments.
@@ -57,6 +59,8 @@ class Assessment(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student', 'Admin')
+    @assessment_ns.doc(security="jsonWebToken")
     def get(self, assessment_id):
         """
         Gets assessment details by ID.
@@ -74,7 +78,7 @@ class Assessment(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @assessment_ns.doc(security="jsonWebToken")
     def put(self, assessment_id):
         """
@@ -97,6 +101,8 @@ class Assessment(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Admin')
+    @assessment_ns.doc(security="jsonWebToken")
     def delete(self, assessment_id):
         """
         Deletes assessment details by ID.
@@ -116,7 +122,7 @@ class AssessmentByStudent(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @assessment_ns.doc(security="jsonWebToken")
     def get(self, student_id):
         """
