@@ -6,7 +6,7 @@ from backend.services.class_service import get_class_service
 from backend.services.user_service import check_if_user_is_student_service
 from backend.data_components.dtos import StudentCreationDto
 from security_config import authorizations
-from flask_jwt_extended import jwt_required
+from backend.utils.auth import role_required
 
 student_ns = Namespace('Student', path='/api/students', description='Operations related to Students', authorizations=authorizations)
 
@@ -20,6 +20,8 @@ class StudentList(Resource):
     @student_ns.expect(student_model)
     @student_ns.response(201, 'Created')
     @student_ns.response(500, 'Internal Server Error')
+    @role_required('Student')
+    @student_ns.doc(security="jsonWebToken")
     def post(self):
         """
         Creates a new student.
@@ -33,7 +35,9 @@ class StudentList(Resource):
 
     @student_ns.response(200, 'Success')
     @student_ns.response(204, 'No Content')
-    @student_ns.response(500, 'Internal Server Error')    
+    @student_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Admin')
+    @student_ns.doc(security="jsonWebToken")
     def get(self):
         """
         Gets all students.
@@ -52,8 +56,8 @@ class StudentByClass(Resource):
     @student_ns.response(200, 'Success')
     @student_ns.response(204, 'No Content')
     @student_ns.response(500, 'Internal Server Error')
-    @jwt_required()
-    @student_ns.doc(security="jsonWebToken")    
+    @role_required('Teacher', 'Admin')
+    @student_ns.doc(security="jsonWebToken")
     def get(self, class_id):
         """
         Gets all students by class ID.
@@ -72,6 +76,8 @@ class Student(Resource):
     @student_ns.response(200, 'Success')
     @student_ns.response(404, 'Not Found')
     @student_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Admin')
+    @student_ns.doc(security="jsonWebToken")
     def get(self, student_id):
         """
         Gets student details by ID.
@@ -88,7 +94,7 @@ class Student(Resource):
     @student_ns.response(200, 'Success')
     @student_ns.response(404, 'Not Found')
     @student_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @student_ns.doc(security="jsonWebToken")
     def delete(self, student_id):
         """
@@ -110,7 +116,7 @@ class StudentClass(Resource):
     @student_ns.response(401, 'Unauthorized')
     @student_ns.response(404, 'Not Found')
     @student_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @student_ns.doc(security="jsonWebToken")
     def get(self, user_id, class_id):
         """
@@ -142,7 +148,7 @@ class StudentAssessment(Resource):
     @student_ns.response(401, 'Unauthorized')
     @student_ns.response(404, 'Not Found')
     @student_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher', 'Admin')
     @student_ns.doc(security="jsonWebToken")
     def get(self, user_id, assessment_id):
         """

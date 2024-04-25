@@ -3,7 +3,7 @@ from flask_restx import Namespace, Resource, fields
 from backend.services.class_service import create_class_service, get_class_service, get_all_classes_service, update_class_service, delete_class_service, get_class_by_code_service
 from backend.data_components.dtos import ClassCreationDto, ClassUpdationDto
 from security_config import authorizations
-from flask_jwt_extended import jwt_required
+from backend.utils.auth import role_required
 
 class_ns = Namespace('Class', path='/api/classes', description='Operations related to Classes', authorizations=authorizations)
 
@@ -22,7 +22,7 @@ class ClassList(Resource):
     @class_ns.expect(class_model)
     @class_ns.response(201, 'Created')
     @class_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher')
     @class_ns.doc(security="jsonWebToken")
     def post(self):
         """
@@ -37,7 +37,9 @@ class ClassList(Resource):
 
     @class_ns.response(200, 'Success')
     @class_ns.response(204, 'No Content')
-    @class_ns.response(500, 'Internal Server Error')    
+    @class_ns.response(500, 'Internal Server Error')
+    @role_required('Admin')
+    @class_ns.doc(security="jsonWebToken")    
     def get(self):
         """
         Gets all classes.
@@ -56,6 +58,8 @@ class Class(Resource):
     @class_ns.response(200, 'Success')
     @class_ns.response(404, 'Not Found')
     @class_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher')
+    @class_ns.doc(security="jsonWebToken")
     def get(self, class_id):
         """
         Gets class details by ID.
@@ -74,7 +78,7 @@ class Class(Resource):
     @class_ns.response(400, 'Bad Request')
     @class_ns.response(404, 'Not Found')
     @class_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Teacher')
     @class_ns.doc(security="jsonWebToken")
     def put(self, class_id):
         """
@@ -97,7 +101,7 @@ class Class(Resource):
     @class_ns.response(200, 'Success')
     @class_ns.response(404, 'Not Found')
     @class_ns.response(500, 'Internal Server Error')
-    @jwt_required()
+    @role_required('Admin')
     @class_ns.doc(security="jsonWebToken")
     def delete(self, class_id):
         """
@@ -118,6 +122,8 @@ class ClassByCode(Resource):
     @class_ns.response(200, 'Success')
     @class_ns.response(404, 'Not Found')
     @class_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher')
+    @class_ns.doc(security="jsonWebToken")
     def get(self, class_code):
         """
         Gets class details by class code.
