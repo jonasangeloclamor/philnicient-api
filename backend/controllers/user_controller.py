@@ -2,10 +2,11 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 from backend.services.user_service import create_user_service, get_user_service, get_all_users_service, get_user_by_username_service, get_user_by_email_service, login_user, update_user_password_service, delete_teacher_and_related_data_service, delete_student_and_related_data_service
 from backend.data_components.dtos import UserCreationDto, UserLoginDto, ForgotPasswordRequestDto, ForgotPasswordResetDto
-from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt, get_jti
 from backend.utils.mail_util import generate_verification_code, send_verification_code, verification_codes
 from security_config import authorizations
 from backend.utils.auth import role_required
+from backend.utils.blacklist import BLACKLIST
 
 user_ns = Namespace('User', path='/api/users', description='Operations related to Users', authorizations=authorizations)
 
@@ -63,6 +64,23 @@ class UserLogin(Resource):
                 }, 200
             else:
                 return {'message': 'Invalid username, email, or password'}, 401
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@user_ns.route('/logout')
+class UserLogout(Resource):
+    @jwt_required()
+    @user_ns.doc(security="jsonWebToken")
+    @user_ns.response(200, 'Success')
+    @user_ns.response(500, 'Internal Server Error')
+    def post(self):
+        """
+        Logs out a user by blacklisting the JWT token.
+        """
+        try:
+            jti = get_jwt()['jti']
+            BLACKLIST.add(jti)
+            return {'message': 'Successfully logged out'}, 200
         except Exception as e:
             return {'message': str(e)}, 500
 
