@@ -62,9 +62,10 @@ class AssessmentResult:
         self.datetimeupdated = datetimeupdated
 
 class Assessment:
-    def __init__(self, id, student_id, questions=None, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, student_id, is_submitted, questions=None, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.student_id = student_id
+        self.is_submitted = is_submitted
         self.questions = questions if questions else []
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated

@@ -13,6 +13,8 @@ def create_assessment_service(assessment_data: AssessmentCreationDto):
     if has_assessment(assessment_data.student_id):
         raise ValueError("Student already has an assessment.")
     
+    assessment_data.is_submitted = False
+    
     assessment = map_assessment_creation_dto_to_model(assessment_data)
     assessment_id = create_assessment(assessment)
     assessment.id = assessment_id
