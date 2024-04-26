@@ -1,7 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.question_service import create_question_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service
-from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto
+from backend.services.question_service import create_multiple_questions_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service
+from backend.data_components.dtos import QuestionUpdationDto
 from security_config import authorizations
 from backend.utils.auth import role_required
 
@@ -35,19 +35,19 @@ update_question_model = question_ns.model('QuestionUpdationDto', {
 
 @question_ns.route('')
 class QuestionList(Resource):
-    @question_ns.expect(question_model)
+    @question_ns.expect([question_model])
     @question_ns.response(201, 'Created')
     @question_ns.response(500, 'Internal Server Error')
     @role_required('Student')
     @question_ns.doc(security="jsonWebToken")
     def post(self):
         """
-        Creates a new question.
+        Creates multiple questions.
         """
         try:
-            question_data = QuestionCreationDto(**request.json)
-            question = create_question_service(question_data)
-            return question.__dict__, 201
+            question_data_list = request.json
+            question_ids = create_multiple_questions_service(question_data_list)
+            return {'message': 'Questions created successfully', 'question_ids': question_ids}, 201
         except Exception as e:
             return {'message': str(e)}, 500
 

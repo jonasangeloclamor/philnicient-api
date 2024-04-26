@@ -1,24 +1,29 @@
-from backend.repositories.question_repository import create_question, get_question, get_all_questions, update_question, delete_question
+from backend.repositories.question_repository import create_questions, get_question, get_all_questions, update_question, delete_question
 from backend.repositories.assessment_repository import has_assessment_id, get_assessment, update_assessment
 from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto
 from backend.data_components.mappings import map_question_creation_dto_to_model
 from backend.utils.string_util import StringUtil
 
-def create_question_service(question_data: QuestionCreationDto):
-    if not has_assessment_id(question_data.assessment_id):
+def create_multiple_questions_service(question_data_list):
+    questions = [QuestionCreationDto(**question_data) for question_data in question_data_list]
+    question_objects = [map_question_creation_dto_to_model(question_data) for question_data in questions]
+    question_ids = create_questions(question_objects)
+
+    assessment_id = question_data_list[0].get("assessment_id")
+
+    if not has_assessment_id(assessment_id):
         raise ValueError("Specified assessment_id is not currently available.")
 
-    question = map_question_creation_dto_to_model(question_data)
-    question_id = create_question(question)
-    question.id = question_id
-    
-    assessment_id = question_data.assessment_id
-    assessment = get_assessment(assessment_id)
-    if assessment:
-        assessment.questions.append(question_id)
-        update_assessment(assessment_id, assessment.__dict__)
-    
-    return question
+    if assessment_id:
+        assessment = get_assessment(assessment_id)
+        if assessment:
+            if not assessment.questions:
+                assessment.questions = question_ids
+            else:
+                assessment.questions.extend(question_ids)
+            update_assessment(assessment_id, assessment.__dict__)
+
+    return question_ids
 
 def get_question_service(question_id):
     return get_question(question_id)
