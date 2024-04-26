@@ -54,7 +54,7 @@ class QuestionList(Resource):
     @question_ns.response(200, 'Success')
     @question_ns.response(204, 'No Content')
     @question_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Teacher', 'Student')
     @question_ns.doc(security="jsonWebToken")
     def get(self):
         """
@@ -74,7 +74,7 @@ class Question(Resource):
     @question_ns.response(200, 'Success')
     @question_ns.response(404, 'Not Found')
     @question_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Teacher', 'Student')
     @question_ns.doc(security="jsonWebToken")
     def get(self, question_id):
         """
@@ -93,7 +93,7 @@ class Question(Resource):
     @question_ns.response(200, 'Success')
     @question_ns.response(404, 'Not Found')
     @question_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Student')
     @question_ns.doc(security="jsonWebToken")
     def put(self, question_id):
         """
@@ -116,7 +116,7 @@ class Question(Resource):
     @question_ns.response(200, 'Success')
     @question_ns.response(404, 'Not Found')
     @question_ns.response(500, 'Internal Server Error')  
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Teacher')
     @question_ns.doc(security="jsonWebToken")
     def delete(self, question_id):
         """

@@ -8,11 +8,13 @@ from backend.utils.auth import role_required
 assessment_ns = Namespace('Assessment', path='/api/assessments', description='Operations related to Assessments', authorizations=authorizations)
 
 assessment_model = assessment_ns.model('AssessmentCreationDto', {
-    'student_id': fields.String(required=True, description='Student ID')
+    'student_id': fields.String(required=True, description='Student ID'),
+    'is_submitted': fields.Boolean(required=True, default=False, description='Is Submitted')
 })
 
 update_assessment_model = assessment_ns.model('AssessmentUpdationDto', {
-    'student_id': fields.String(required=True, description='Student ID')
+    'student_id': fields.String(required=True, description='Student ID'),
+    'is_submitted': fields.Boolean(required=True, description='Is Submitted')
 })
 
 @assessment_ns.route('')
@@ -39,7 +41,7 @@ class AssessmentList(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(204, 'No Content')
     @assessment_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Student')
     @assessment_ns.doc(security="jsonWebToken")
     def get(self):
         """
@@ -59,7 +61,7 @@ class Assessment(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Teacher', 'Student')
     @assessment_ns.doc(security="jsonWebToken")
     def get(self, assessment_id):
         """
@@ -78,7 +80,7 @@ class Assessment(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Student')
     @assessment_ns.doc(security="jsonWebToken")
     def put(self, assessment_id):
         """
@@ -101,7 +103,7 @@ class Assessment(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher')
     @assessment_ns.doc(security="jsonWebToken")
     def delete(self, assessment_id):
         """
@@ -122,7 +124,7 @@ class AssessmentByStudent(Resource):
     @assessment_ns.response(200, 'Success')
     @assessment_ns.response(404, 'Not Found')
     @assessment_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Student')
     @assessment_ns.doc(security="jsonWebToken")
     def get(self, student_id):
         """

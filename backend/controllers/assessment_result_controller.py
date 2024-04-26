@@ -43,7 +43,7 @@ class AssessmentResultList(Resource):
     @assessment_result_ns.response(201, 'Created')
     @assessment_result_ns.response(400, 'Bad Request')
     @assessment_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Teacher')
     @assessment_result_ns.doc(security="jsonWebToken")
     def post(self):
         """
@@ -61,7 +61,7 @@ class AssessmentResultList(Resource):
     @assessment_result_ns.response(200, 'Success')
     @assessment_result_ns.response(204, 'No Content')
     @assessment_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Student', 'Admin')
     @assessment_result_ns.doc(security="jsonWebToken")  
     def get(self):
         """
@@ -101,7 +101,7 @@ class AssessmentResult(Resource):
     @assessment_result_ns.response(400, 'Bad Request')
     @assessment_result_ns.response(404, 'Not Found')
     @assessment_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher')
     @assessment_result_ns.doc(security="jsonWebToken")
     def put(self, assessment_result_id):
         """
@@ -124,7 +124,7 @@ class AssessmentResult(Resource):
     @assessment_result_ns.response(200, 'Success')
     @assessment_result_ns.response(404, 'Not Found')
     @assessment_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher')
     @assessment_result_ns.doc(security="jsonWebToken")
     def delete(self, assessment_result_id):
         """
