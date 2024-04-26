@@ -1,11 +1,18 @@
 from backend.firebase_setup.firebase_config import db
 from backend.data_components.models import Question
 
-def create_question(question):
-    doc_ref = db.collection('questions').document()
-    question.id = doc_ref.id
-    doc_ref.set(question.__dict__)
-    return question.id
+def create_questions(questions):
+    batch = db.batch()
+    question_ids = []
+
+    for question in questions:
+        doc_ref = db.collection('questions').document()
+        question.id = doc_ref.id
+        batch.set(doc_ref, question.__dict__)
+        question_ids.append(question.id)
+
+    batch.commit()
+    return question_ids
 
 def get_question(question_id):
     doc_ref = db.collection('questions').document(question_id)
