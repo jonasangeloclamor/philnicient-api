@@ -55,7 +55,7 @@ class ModelResultPrediction(Resource):
     @model_result_ns.expect(result_prediction_model)
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Teacher')
     @model_result_ns.doc(security="jsonWebToken")
     def post(self):
         """
@@ -101,7 +101,7 @@ class ModelResultList(Resource):
     @model_result_ns.response(201, 'Created')
     @model_result_ns.response(400, 'Bad Request')
     @model_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Student', 'Admin')
+    @role_required('Teacher')
     @model_result_ns.doc(security="jsonWebToken")
     def post(self):
         """
@@ -119,7 +119,7 @@ class ModelResultList(Resource):
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(204, 'No Content')
     @model_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Student', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")    
     def get(self):
         """
@@ -139,7 +139,7 @@ class ModelResult(Resource):
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Student', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")
     def get(self, model_result_id):
         """
@@ -159,7 +159,7 @@ class ModelResult(Resource):
     @model_result_ns.response(400, 'Bad Request')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher')
     @model_result_ns.doc(security="jsonWebToken")
     def put(self, model_result_id):
         """
@@ -186,7 +186,7 @@ class ModelResultByStudent(Resource):
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Student', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")
     def get(self, student_id):
         """
@@ -206,7 +206,7 @@ class ModelResultByStudentAndMajorCategory(Resource):
     @model_result_ns.response(200, 'Success')
     @model_result_ns.response(404, 'Not Found')
     @model_result_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Student', 'Admin')
     @model_result_ns.doc(security="jsonWebToken")
     def get(self, student_id, major_category):
         """

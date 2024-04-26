@@ -101,12 +101,14 @@ class AssessmentResultUpdationDto:
         self.student_id = student_id
 
 class AssessmentCreationDto:
-    def __init__(self, student_id):
+    def __init__(self, student_id, is_submitted):
         self.student_id = student_id
+        self.is_submitted = is_submitted
 
 class AssessmentUpdationDto:
-    def __init__(self, student_id=None):
+    def __init__(self, student_id=None, is_submitted=None):
         self.student_id = student_id
+        self.is_submitted = is_submitted
 
 class QuestionCreationDto:
     def __init__(self, question, figure, choices, answer, major_category, student_answer, student_cri, is_for_review, time, assessment_id):
