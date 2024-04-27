@@ -124,7 +124,7 @@ class QuestionCreationDto:
         self.assessment_id = assessment_id
 
 class QuestionUpdationDto:
-    def __init__(self, question=None, figure=None, choices=None, answer=None, major_category=None, student_answer=None, student_cri=None, is_for_review=None, time=None, assessment_id=None):
+    def __init__(self, question=None, figure=None, choices=None, answer=None, major_category=None, student_answer=None, student_cri=None, is_for_review=None, time=None):
         self.question = question
         self.figure = figure
         self.choices = choices
@@ -134,4 +134,3 @@ class QuestionUpdationDto:
         self.student_cri = student_cri
         self.is_for_review = is_for_review
         self.time = time
-        self.assessment_id = assessment_id

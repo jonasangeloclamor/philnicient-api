@@ -20,6 +20,18 @@ question_model = question_ns.model('QuestionCreationDto', {
     'assessment_id': fields.String(required=True, description='Assessment ID')
 })
 
+update_question_by_id_model = question_ns.model('QuestionDto', {
+    'question': fields.String(required=True, description='Question'),
+    'figure': fields.String(required=True, description='Figure'),
+    'choices': fields.List(fields.String(), required=True, description='Choices'),
+    'answer': fields.String(required=True, description='Answer'),
+    'major_category': fields.String(required=True, description='Major Category'),
+    'student_answer': fields.String(required=True, description='Student Answer'),
+    'student_cri': fields.String(required=True, description='Student CRI'),
+    'is_for_review': fields.String(required=True, description='Is For Review'),
+    'time': fields.Integer(required=True, description='Time')
+})
+
 update_question_model = question_ns.model('QuestionUpdationDto', {
     'id': fields.String(required=True, description='Question ID'),
     'question': fields.String(required=True, description='Question'),
@@ -30,8 +42,7 @@ update_question_model = question_ns.model('QuestionUpdationDto', {
     'student_answer': fields.String(required=True, description='Student Answer'),
     'student_cri': fields.String(required=True, description='Student CRI'),
     'is_for_review': fields.String(required=True, description='Is For Review'),
-    'time': fields.Integer(required=True, description='Time'),
-    'assessment_id': fields.String(required=True, description='Assessment ID')
+    'time': fields.Integer(required=True, description='Time')
 })
 
 @question_ns.route('')
@@ -108,7 +119,7 @@ class Question(Resource):
         except Exception as e:
             return {'message': str(e)}, 500
 
-    @question_ns.expect(update_question_model)
+    @question_ns.expect(update_question_by_id_model)
     @question_ns.response(200, 'Success')
     @question_ns.response(404, 'Not Found')
     @question_ns.response(500, 'Internal Server Error')

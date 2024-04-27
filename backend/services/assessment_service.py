@@ -1,4 +1,4 @@
-from backend.repositories.assessment_repository import create_assessment, get_assessment, get_all_assessments, update_assessment, get_assessment_id_by_student_id, has_assessment, has_assessment_id, delete_assessment, is_assessment_for_student
+from backend.repositories.assessment_repository import create_assessment, get_assessment, get_all_assessments, update_assessment, get_assessment_id_by_student_id, has_assessment, has_assessment_id, delete_assessment, is_assessment_for_student, get_all_assessments_by_class_id
 from backend.repositories.student_repository import has_student_id
 from backend.repositories.question_repository import delete_questions_by_assessment_id
 from backend.repositories.user_repository import is_student
@@ -47,3 +47,6 @@ def is_assessment_for_student_service(assessment_id, user_id):
     if not is_student(user_id):
         raise ValueError("Specified user_id does not correspond to a student.")
     return is_assessment_for_student(assessment_id, user_id)
+
+def get_all_assessments_by_class_id_service(class_id):
+    return get_all_assessments_by_class_id(class_id)
