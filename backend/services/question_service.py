@@ -1,4 +1,4 @@
-from backend.repositories.question_repository import create_questions, get_question, get_all_questions, update_question, delete_question
+from backend.repositories.question_repository import create_questions, get_question, get_all_questions, update_question, delete_question, update_multiple_questions, has_question_id
 from backend.repositories.assessment_repository import has_assessment_id, get_assessment, update_assessment
 from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto
 from backend.data_components.mappings import map_question_creation_dto_to_model
@@ -24,6 +24,42 @@ def create_multiple_questions_service(question_data_list):
             update_assessment(assessment_id, assessment.__dict__)
 
     return question_ids
+
+def update_multiple_questions_service(question_data_list):
+    missing_question_ids = set()
+    missing_assessment_ids = set()
+    
+    for question_data in question_data_list:
+        question_id = question_data.get("id")
+        assessment_id = question_data.get("assessment_id")
+        
+        if not has_question_id(question_id):
+            missing_question_ids.add(question_id)
+        
+        if not has_assessment_id(assessment_id):
+            missing_assessment_ids.add(assessment_id)
+    
+    if missing_question_ids:
+        if len(missing_question_ids) == 1:
+            missing_question_id = missing_question_ids.pop()
+            raise ValueError(f"Question ID '{missing_question_id}' is not currently available.")
+        else:
+            missing_question_ids_str = ', '.join(missing_question_ids)
+            raise ValueError(f"The following question IDs are not currently available: {missing_question_ids_str}.")
+    
+    if missing_assessment_ids:
+        if len(missing_assessment_ids) == 1:
+            missing_assessment_id = missing_assessment_ids.pop()
+            raise ValueError(f"Assessment ID '{missing_assessment_id}' is not currently available.")
+        else:
+            missing_assessment_ids_str = ', '.join(missing_assessment_ids)
+            raise ValueError(f"The following assessment IDs are not currently available: {missing_assessment_ids_str}.")
+    
+    current_time = StringUtil.current_ph_time()
+    for question_data in question_data_list:
+        question_data['datetimeupdated'] = current_time
+
+    update_multiple_questions(question_data_list)
 
 def get_question_service(question_id):
     return get_question(question_id)
