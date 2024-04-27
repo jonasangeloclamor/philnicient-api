@@ -66,3 +66,15 @@ def is_assessment_for_student(assessment_id, user_id):
             if assessment['student_id'] == student['id']:
                 return True
     return False
+
+def get_all_assessments_by_class_id(class_id):
+    assessments = []
+    student_docs = db.collection('students').where('class_id', '==', class_id).stream()
+    for doc in student_docs:
+        student_data = doc.to_dict()
+        student_assessments = db.collection('assessments').where('student_id', '==', student_data['id']).stream()
+        for assessment_doc in student_assessments:
+            assessment_data = assessment_doc.to_dict()
+            assessment_data['id'] = assessment_doc.id
+            assessments.append(Assessment(**assessment_data))
+    return assessments
