@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.assessment_service import create_assessment_service, get_assessment_service, get_all_assessments_service, update_assessment_service, get_assessment_id_by_student_id_service, delete_assessment_service
+from backend.services.assessment_service import create_assessment_service, get_assessment_service, get_all_assessments_service, update_assessment_service, get_assessment_id_by_student_id_service, delete_assessment_service, get_all_assessments_by_class_id_service
+from backend.services.class_service import get_class_service
 from backend.data_components.dtos import AssessmentCreationDto, AssessmentUpdationDto
 from security_config import authorizations
 from backend.utils.auth import role_required
@@ -136,6 +137,31 @@ class AssessmentByStudent(Resource):
                 return {'assessment_id': assessment_id}, 200
             else:
                 return {'message': 'Assessment not found for the given student ID'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@assessment_ns.route('/<string:class_id>/assessments')
+class AssessmentListByClass(Resource):
+    @assessment_ns.response(200, 'Success')
+    @assessment_ns.response(404, 'Not Found')
+    @assessment_ns.response(204, 'No Content')
+    @assessment_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student')
+    @assessment_ns.doc(security="jsonWebToken")
+    def get(self, class_id):
+        """
+        Gets all assessments for a given class.
+        """
+        try:
+            class_info = get_class_service(class_id)
+            if not class_info:
+                return {'message': 'Class not found'}, 404
+        
+            assessments = get_all_assessments_by_class_id_service(class_id)
+            if assessments:
+                return [a.__dict__ for a in assessments], 200
+            else:
+                return {'message': 'No assessments found for the given class ID'}, 204
         except Exception as e:
             return {'message': str(e)}, 500
         
