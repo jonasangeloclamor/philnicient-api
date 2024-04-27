@@ -1,6 +1,6 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.question_service import create_multiple_questions_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service
+from backend.services.question_service import create_multiple_questions_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service, update_multiple_questions_service
 from backend.data_components.dtos import QuestionUpdationDto
 from security_config import authorizations
 from backend.utils.auth import role_required
@@ -21,6 +21,7 @@ question_model = question_ns.model('QuestionCreationDto', {
 })
 
 update_question_model = question_ns.model('QuestionUpdationDto', {
+    'id': fields.String(required=True, description='Question ID'),
     'question': fields.String(required=True, description='Question'),
     'figure': fields.String(required=True, description='Figure'),
     'choices': fields.List(fields.String(), required=True, description='Choices'),
@@ -66,6 +67,24 @@ class QuestionList(Resource):
                 return [qt.__dict__ for qt in questions], 200
             else:
                 return {'message': 'No questions found'}, 204
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@question_ns.route('/update-multiple-questions')
+class UpdateMultipleQuestions(Resource):
+    @question_ns.expect([update_question_model])
+    @question_ns.response(200, 'Success')
+    @question_ns.response(500, 'Internal Server Error')
+    @role_required('Student')
+    @question_ns.doc(security="jsonWebToken")
+    def put(self):
+        """
+        Updates multiple questions.
+        """
+        try:
+            question_data_list = request.json
+            update_multiple_questions_service(question_data_list)
+            return {'message': 'Questions updated successfully'}, 200
         except Exception as e:
             return {'message': str(e)}, 500
 

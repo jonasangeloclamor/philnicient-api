@@ -14,6 +14,15 @@ def create_questions(questions):
     batch.commit()
     return question_ids
 
+def update_multiple_questions(question_data_list):
+    batch = db.batch()
+    for question_data in question_data_list:
+        question_id = question_data.get("id")
+        if question_id:
+            question_ref = db.collection('questions').document(question_id)
+            batch.update(question_ref, question_data)
+    batch.commit()
+
 def get_question(question_id):
     doc_ref = db.collection('questions').document(question_id)
     doc = doc_ref.get()
@@ -43,4 +52,9 @@ def delete_questions_by_assessment_id(assessment_id):
     docs = db.collection('questions').where('assessment_id', '==', assessment_id).stream()
     for doc in docs:
         doc.reference.delete()
+
+def has_question_id(question_id):
+    doc_ref = db.collection('questions').document(question_id)
+    doc = doc_ref.get()
+    return doc.exists
         
