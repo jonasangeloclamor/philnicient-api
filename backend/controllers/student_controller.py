@@ -56,7 +56,7 @@ class StudentByClass(Resource):
     @student_ns.response(200, 'Success')
     @student_ns.response(204, 'No Content')
     @student_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Admin', 'Student')
     @student_ns.doc(security="jsonWebToken")
     def get(self, class_id):
         """
@@ -116,7 +116,7 @@ class StudentClass(Resource):
     @student_ns.response(401, 'Unauthorized')
     @student_ns.response(404, 'Not Found')
     @student_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Admin', 'Student')
     @student_ns.doc(security="jsonWebToken")
     def get(self, user_id, class_id):
         """
