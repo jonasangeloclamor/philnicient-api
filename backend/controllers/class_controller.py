@@ -122,7 +122,7 @@ class ClassByCode(Resource):
     @class_ns.response(200, 'Success')
     @class_ns.response(404, 'Not Found')
     @class_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher')
+    @role_required('Teacher', 'Student')
     @class_ns.doc(security="jsonWebToken")
     def get(self, class_code):
         """
