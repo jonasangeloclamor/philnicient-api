@@ -1,5 +1,5 @@
 from backend.repositories.student_repository import create_student, get_student, get_all_students, delete_student, get_students_by_class_id, is_student_in_class
-from backend.repositories.class_repository import has_class
+from backend.repositories.class_repository import has_class, get_all_classes_by_teacher_id
 from backend.repositories.user_repository import is_student
 from backend.repositories.assessment_repository import get_assessment_id_by_student_id, has_assessment_id, delete_assessment
 from backend.repositories.question_repository import delete_questions_by_assessment_id
@@ -45,3 +45,12 @@ def is_student_in_class_service(user_id, class_id):
     if not is_student(user_id):
         raise ValueError("Specified user_id does not correspond to a student.")
     return is_student_in_class(user_id, class_id)
+
+def is_student_in_teacher_class(student_id, teacher_id):
+    classes_taught_by_teacher = get_all_classes_by_teacher_id(teacher_id)
+    for class_ in classes_taught_by_teacher:
+        students_in_class = get_students_by_class_id(class_.id)
+        for student in students_in_class:
+            if student.id == student_id:
+                return True
+    return False
