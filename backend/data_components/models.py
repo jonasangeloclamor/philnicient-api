@@ -29,7 +29,7 @@ class Student:
         self.datetimeupdated = datetimeupdated
 
 class ModelResult:
-    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, understanding_level, cri_criteria, accuracy, student_id, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, major_category, number_of_items, total_score, total_time_taken, average_cri, understanding_level, cri_criteria, accuracy, student_id, teacher_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.major_category = major_category
         self.number_of_items = number_of_items
@@ -40,11 +40,12 @@ class ModelResult:
         self.cri_criteria = cri_criteria
         self.accuracy = accuracy
         self.student_id = student_id
+        self.teacher_id = teacher_id
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated
 
 class AssessmentResult:
-    def __init__(self, id, total_items, total_score, basic_theory_score, computer_systems_score, technical_elements_score, development_techniques_score, project_management_score, service_management_score, system_strategy_score, management_strategy_score, corporate_legal_affairs_score, student_id, datetimecreated=None, datetimeupdated=None):
+    def __init__(self, id, total_items, total_score, basic_theory_score, computer_systems_score, technical_elements_score, development_techniques_score, project_management_score, service_management_score, system_strategy_score, management_strategy_score, corporate_legal_affairs_score, student_id, teacher_id, datetimecreated=None, datetimeupdated=None):
         self.id = id
         self.total_items = total_items
         self.total_score = total_score
@@ -58,6 +59,7 @@ class AssessmentResult:
         self.management_strategy_score = management_strategy_score
         self.corporate_legal_affairs_score = corporate_legal_affairs_score
         self.student_id = student_id
+        self.teacher_id = teacher_id
         self.datetimecreated = datetimecreated
         self.datetimeupdated = datetimeupdated
 
