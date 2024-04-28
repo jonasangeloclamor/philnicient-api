@@ -57,4 +57,13 @@ def has_question_id(question_id):
     doc_ref = db.collection('questions').document(question_id)
     doc = doc_ref.get()
     return doc.exists
-        
+
+def get_questions_by_assessment_id(assessment_id):
+    questions = []
+    docs = db.collection('questions').where('assessment_id', '==', assessment_id).stream()
+    for doc in docs:
+        question_data = doc.to_dict()
+        question_data['id'] = doc.id
+        questions.append(Question(**question_data))
+    return questions
+      
