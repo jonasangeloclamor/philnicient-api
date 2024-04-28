@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.question_service import create_multiple_questions_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service, update_multiple_questions_service
+from backend.services.question_service import create_multiple_questions_service, get_question_service, get_all_questions_service, update_question_service, delete_question_service, update_multiple_questions_service, get_questions_by_assessment_id_service
+from backend.services.assessment_service import get_assessment_service
 from backend.data_components.dtos import QuestionUpdationDto
 from security_config import authorizations
 from backend.utils.auth import role_required
@@ -159,6 +160,31 @@ class Question(Resource):
 
             delete_question_service(question_id)
             return {'message': 'Question deleted successfully'}, 200
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@question_ns.route('/assessment/<string:assessment_id>')
+class QuestionListByAssessment(Resource):
+    @question_ns.response(200, 'Success')
+    @question_ns.response(204, 'No Content')
+    @question_ns.response(404, 'Not Found')
+    @question_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student')
+    @question_ns.doc(security="jsonWebToken")
+    def get(self, assessment_id):
+        """
+        Gets all questions by assessment ID.
+        """
+        try:
+            assessment = get_assessment_service(assessment_id)
+            if not assessment:
+                return {'message': 'Assessment not found'}, 404
+            
+            questions = get_questions_by_assessment_id_service(assessment_id)
+            if questions:
+                return [qt.__dict__ for qt in questions], 200
+            else:
+                return {'message': 'No questions found for the specified assessment ID'}, 204
         except Exception as e:
             return {'message': str(e)}, 500
         
