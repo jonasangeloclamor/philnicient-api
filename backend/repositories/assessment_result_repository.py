@@ -43,3 +43,12 @@ def has_assessment_result_by_student_id(student_id):
 
 def delete_assessment_result(assessment_result_id):
     db.collection('assessment_results').document(assessment_result_id).delete()
+
+def get_assessment_result_by_student_id_and_teacher_id(student_id, teacher_id):
+    query = db.collection('assessment_results').where('student_id', '==', student_id).where('teacher_id', '==', teacher_id).limit(1)
+    docs = query.stream()
+
+    for doc in docs:
+        return AssessmentResult(**doc.to_dict())
+
+    return None

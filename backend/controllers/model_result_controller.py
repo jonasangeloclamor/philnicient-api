@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.model_result_service import create_model_result_service, get_model_result_service, get_all_model_results_service, update_model_result_service, get_model_result_by_student_id_service, get_model_result_by_student_id_and_major_category_service, get_model_result_by_major_category_service
+from backend.services.model_result_service import create_model_result_service, get_model_result_service, get_all_model_results_service, update_model_result_service, get_model_result_by_student_id_service, get_model_result_by_student_id_and_major_category_service, get_model_result_by_major_category_service, create_multiple_model_results_service, update_multiple_model_results_service
 from backend.data_components.dtos import ModelResultCreationDto, ModelResultUpdationDto, ModelResultPredictionDto
 from security_config import authorizations
 from fuzzy_logic.fuzzy_logic_functions import determine_understanding
@@ -27,11 +27,12 @@ result_model = model_result_ns.model('ModelResultCreationDto', {
     'understanding_level': fields.Float(required=True, description='Understanding Level'),
     'cri_criteria': fields.String(required=True, description='CRI Criteria'),
     'accuracy': fields.Float(required=True, description='Accuracy'),
-    'student_id': fields.String(required=True, description='Student ID')
+    'student_id': fields.String(required=True, description='Student ID'),
+    'teacher_id': fields.String(required=True, description='Teacher ID')
 })
 
-update_result_model = model_result_ns.model('ModelResultUpdationDto', {
-    'major_category': fields.Integer(required=True, description='Major Category'),
+update_multiple_results_model = model_result_ns.model('UpdateMultipleModelResultsDto', {
+    'id': fields.String(required=True, description='Model Result ID'),
     'number_of_items': fields.Integer(required=True, description='Number of Items'),
     'total_score': fields.Integer(required=True, description='Total Score'),
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
@@ -39,7 +40,20 @@ update_result_model = model_result_ns.model('ModelResultUpdationDto', {
     'understanding_level': fields.Float(required=True, description='Understanding Level'),
     'cri_criteria': fields.String(required=True, description='CRI Criteria'),
     'accuracy': fields.Float(required=True, description='Accuracy'),
-    'student_id': fields.String(required=True, description='Student ID')
+    'student_id': fields.String(required=True, description='Student ID'),
+    'teacher_id': fields.String(required=True, description='Teacher ID')
+})
+
+update_result_model = model_result_ns.model('ModelResultUpdationDto', {
+    'number_of_items': fields.Integer(required=True, description='Number of Items'),
+    'total_score': fields.Integer(required=True, description='Total Score'),
+    'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
+    'average_cri': fields.Float(required=True, description='Average CRI'),
+    'understanding_level': fields.Float(required=True, description='Understanding Level'),
+    'cri_criteria': fields.String(required=True, description='CRI Criteria'),
+    'accuracy': fields.Float(required=True, description='Accuracy'),
+    'student_id': fields.String(required=True, description='Student ID'),
+    'teacher_id': fields.String(required=True, description='Teacher ID')
 })
 
 result_prediction_model = model_result_ns.model('ModelResultPredictionDto', {
@@ -49,6 +63,48 @@ result_prediction_model = model_result_ns.model('ModelResultPredictionDto', {
     'total_time_taken': fields.Integer(required=True, description='Total Time Taken'),
     'average_cri': fields.Float(required=True, description='Average CRI')
 })
+
+@model_result_ns.route('/create')
+class ModelResultBatchCreate(Resource):
+    @model_result_ns.expect([result_model])
+    @model_result_ns.response(201, 'Created')
+    @model_result_ns.response(400, 'Bad Request')
+    @model_result_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher')
+    @model_result_ns.doc(security="jsonWebToken")
+    def post(self):
+        """
+        Creates batch of model results.
+        """
+        try:
+            model_results_data = [ModelResultCreationDto(**data) for data in request.json]
+            model_result_ids = create_multiple_model_results_service(model_results_data)
+            return {'model_result_ids': model_result_ids}, 201
+        except ValueError as ve:
+            return {'message': str(ve)}, 400
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@model_result_ns.route('/update-multiple-model-results')
+class ModelResultBatchUpdate(Resource):
+    @model_result_ns.expect([update_multiple_results_model])
+    @model_result_ns.response(200, 'Success')
+    @model_result_ns.response(400, 'Bad Request')
+    @model_result_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher')
+    @model_result_ns.doc(security="jsonWebToken")
+    def put(self):
+        """
+        Updates batch of model results.
+        """
+        try:
+            model_results_data = request.json
+            update_multiple_model_results_service(model_results_data)
+            return {'message': 'Model results updated successfully'}, 200
+        except ValueError as ve:
+            return {'message': str(ve)}, 400
+        except Exception as e:
+            return {'message': str(e)}, 500
 
 @model_result_ns.route('/predict-cri-criteria')
 class ModelResultPrediction(Resource):
