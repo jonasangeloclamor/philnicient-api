@@ -19,7 +19,8 @@ assessment_result_model = assessment_result_ns.model('AssessmentResultCreationDt
     'system_strategy_score': fields.Integer(required=True, description='System Strategy Score'),
     'management_strategy_score': fields.Integer(required=True, description='Management Strategy Score'),
     'corporate_legal_affairs_score': fields.Integer(required=True, description='Corporate Legal Affairs Score'),
-    'student_id': fields.String(required=True, description='Student ID')
+    'student_id': fields.String(required=True, description='Student ID'),
+    'teacher_id': fields.String(required=True, description='Teacher ID')
 })
 
 update_assessment_result_model = assessment_result_ns.model('AssessmentResultUpdationDto', {
@@ -34,7 +35,8 @@ update_assessment_result_model = assessment_result_ns.model('AssessmentResultUpd
     'system_strategy_score': fields.Integer(required=True, description='System Strategy Score'),
     'management_strategy_score': fields.Integer(required=True, description='Management Strategy Score'),
     'corporate_legal_affairs_score': fields.Integer(required=True, description='Corporate Legal Affairs Score'),
-    'student_id': fields.String(required=True, description='Student ID')
+    'student_id': fields.String(required=True, description='Student ID'),
+    'teacher_id': fields.String(required=True, description='Teacher ID')
 })
 
 @assessment_result_ns.route('')
@@ -118,6 +120,8 @@ class AssessmentResult(Resource):
 
             update_assessment_result_service(assessment_result_id, assessment_result_details)
             return {'message': 'Assessment result updated successfully'}, 200
+        except ValueError as ve:
+            return {'message': str(ve)}, 400
         except Exception as e:
             return {'message': str(e)}, 
 
