@@ -53,3 +53,12 @@ def get_all_classes_by_teacher_id(teacher_id):
         class_data['id'] = doc.id
         classes.append(Class(**class_data))
     return classes
+
+def get_class_id_by_teacher_id(teacher_id):
+    query = db.collection('classes').where('teacher_id', '==', teacher_id).limit(1)
+    docs = query.stream()
+
+    for doc in docs:
+        return doc.id
+
+    return None
