@@ -148,7 +148,7 @@ class StudentAssessment(Resource):
     @student_ns.response(401, 'Unauthorized')
     @student_ns.response(404, 'Not Found')
     @student_ns.response(500, 'Internal Server Error')
-    @role_required('Teacher', 'Admin')
+    @role_required('Teacher', 'Admin', 'Student')
     @student_ns.doc(security="jsonWebToken")
     def get(self, user_id, assessment_id):
         """
