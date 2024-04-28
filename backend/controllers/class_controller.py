@@ -38,7 +38,7 @@ class ClassList(Resource):
     @class_ns.response(200, 'Success')
     @class_ns.response(204, 'No Content')
     @class_ns.response(500, 'Internal Server Error')
-    @role_required('Admin')
+    @role_required('Admin', 'Teacher', 'Student')
     @class_ns.doc(security="jsonWebToken")    
     def get(self):
         """
