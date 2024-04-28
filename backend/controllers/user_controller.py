@@ -152,7 +152,7 @@ class User(Resource):
     @user_ns.response(200, 'Success')
     @user_ns.response(404, 'Not Found')
     @user_ns.response(500, 'Internal Server Error')
-    @role_required('Admin')
+    @role_required('Admin', 'Teacher')
     @user_ns.doc(security="jsonWebToken") 
     def get(self, user_id):
         """
