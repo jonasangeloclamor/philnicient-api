@@ -1,7 +1,7 @@
 from typing import List
 from backend.repositories.model_result_repository import create_model_result, get_model_result, get_all_model_results, update_model_result, get_model_result_by_student_id, get_model_result_by_student_id_and_major_category, get_model_result_by_major_category, create_multiple_model_results, update_multiple_model_results, has_model_result_id
 from backend.repositories.student_repository import has_student_id, is_student_enrolled_in_class
-from backend.repositories.class_repository import get_class_id_by_teacher_id
+from backend.repositories.class_repository import get_class_ids_by_teacher_id
 from backend.repositories.user_repository import is_teacher
 from backend.data_components.dtos import ModelResultCreationDto, ModelResultUpdationDto
 from backend.data_components.mappings import map_model_result_creation_dto_to_model
@@ -13,12 +13,12 @@ def create_multiple_model_results_service(model_results_details: List[ModelResul
             raise ValueError("Specified student_id is not currently available.")
         
         teacher_id = model_result_details.teacher_id
-        class_id = get_class_id_by_teacher_id(teacher_id)
-        if not class_id:
+        class_ids = get_class_ids_by_teacher_id(teacher_id)
+        if not class_ids:
             raise ValueError("Specified teacher_id is not associated with any class.")
     
-        if not is_student_enrolled_in_class(model_result_details.student_id, class_id):
-            raise ValueError("Specified student_id is not enrolled in the class taught by the specified teacher.")
+        if not is_student_enrolled_in_class(model_result_details.student_id, class_ids):
+            raise ValueError("Specified student_id is not enrolled in any class taught by the specified teacher.")
 
     existing_major_categories = set()
     for model_result_details in model_results_details:
@@ -92,12 +92,12 @@ def create_model_result_service(model_result_details: ModelResultCreationDto):
         raise ValueError("Specified student_id is not currently available.")
     
     teacher_id = model_result_details.teacher_id
-    class_id = get_class_id_by_teacher_id(teacher_id)
-    if not class_id:
+    class_ids = get_class_ids_by_teacher_id(teacher_id)
+    if not class_ids:
         raise ValueError("Specified teacher_id is not associated with any class.")
     
-    if not is_student_enrolled_in_class(model_result_details.student_id, class_id):
-        raise ValueError("Specified student_id is not enrolled in the class taught by the specified teacher.")
+    if not is_student_enrolled_in_class(model_result_details.student_id, class_ids):
+        raise ValueError("Specified student_id is not enrolled in any class taught by the specified teacher.")
 
     student_id = model_result_details.student_id
     major_category = model_result_details.major_category
@@ -122,8 +122,8 @@ def update_model_result_service(model_result_id, model_result_details: ModelResu
         raise ValueError("Specified student_id is not currently available.") 
 
     teacher_id = model_result_details.teacher_id
-    class_id = get_class_id_by_teacher_id(teacher_id)
-    if not class_id:
+    class_ids = get_class_ids_by_teacher_id(teacher_id)
+    if not class_ids:
         raise ValueError("Specified teacher_id is not associated with any class.")
 
     existing_model_result = get_model_result(model_result_id)
