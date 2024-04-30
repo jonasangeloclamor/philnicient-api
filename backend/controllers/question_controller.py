@@ -5,6 +5,7 @@ from backend.services.assessment_service import get_assessment_service
 from backend.data_components.dtos import QuestionUpdationDto
 from security_config import authorizations
 from backend.utils.auth import role_required
+from flask_jwt_extended import get_jwt_identity
 
 question_ns = Namespace('Question', path='/api/questions', description='Operations related to Questions', authorizations=authorizations)
 
@@ -25,7 +26,6 @@ update_question_by_id_model = question_ns.model('QuestionDto', {
     'question': fields.String(required=True, description='Question'),
     'figure': fields.String(required=True, description='Figure'),
     'choices': fields.List(fields.String(), required=True, description='Choices'),
-    'answer': fields.String(required=True, description='Answer'),
     'major_category': fields.String(required=True, description='Major Category'),
     'student_answer': fields.String(required=True, description='Student Answer'),
     'student_cri': fields.String(required=True, description='Student CRI'),
@@ -38,7 +38,6 @@ update_question_model = question_ns.model('QuestionUpdationDto', {
     'question': fields.String(required=True, description='Question'),
     'figure': fields.String(required=True, description='Figure'),
     'choices': fields.List(fields.String(), required=True, description='Choices'),
-    'answer': fields.String(required=True, description='Answer'),
     'major_category': fields.String(required=True, description='Major Category'),
     'student_answer': fields.String(required=True, description='Student Answer'),
     'student_cri': fields.String(required=True, description='Student CRI'),
@@ -176,13 +175,14 @@ class QuestionListByAssessment(Resource):
         Gets all questions by assessment ID.
         """
         try:
+            user_id = get_jwt_identity()
             assessment = get_assessment_service(assessment_id)
             if not assessment:
                 return {'message': 'Assessment not found'}, 404
             
-            questions = get_questions_by_assessment_id_service(assessment_id)
+            questions = get_questions_by_assessment_id_service(assessment_id, user_id)
             if questions:
-                return [qt.__dict__ for qt in questions], 200
+                return questions, 200
             else:
                 return {'message': 'No questions found for the specified assessment ID'}, 204
         except Exception as e:
