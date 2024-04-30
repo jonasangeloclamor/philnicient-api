@@ -62,8 +62,9 @@ def get_students_by_student_id(student_id):
         students.append(Student(**student_data))
     return students
 
-def is_student_enrolled_in_class(student_id, class_id):
-    query = db.collection('students').where('id', '==', student_id).where('class_id', '==', class_id).limit(1).stream()
-    for doc in query:
-        return True
+def is_student_enrolled_in_class(student_id, class_ids):
+    for class_id in class_ids:
+        query = db.collection('students').where('id', '==', student_id).where('class_id', '==', class_id).limit(1).stream()
+        for doc in query:
+            return True
     return False
