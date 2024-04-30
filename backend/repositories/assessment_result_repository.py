@@ -1,5 +1,6 @@
 from backend.firebase_setup.firebase_config import db
 from backend.data_components.models import AssessmentResult
+from backend.repositories.class_repository import get_class
 
 def create_assessment_result(assessment_result):
     doc_ref = db.collection('assessment_results').document()
@@ -52,3 +53,15 @@ def get_assessment_result_by_student_id_and_teacher_id(student_id, teacher_id):
         return AssessmentResult(**doc.to_dict())
 
     return None
+
+def get_all_assessment_results_by_class_id(class_id):
+    assessments = []
+    class_data = get_class(class_id)
+    if class_data:
+        teacher_id = class_data.teacher_id
+        query = db.collection('assessment_results').where('teacher_id', '==', teacher_id).stream()
+        for doc in query:
+            assessment_data = doc.to_dict()
+            assessment_data['id'] = doc.id
+            assessments.append(AssessmentResult(**assessment_data))
+    return assessments
