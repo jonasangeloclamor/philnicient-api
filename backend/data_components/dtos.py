@@ -133,12 +133,18 @@ class QuestionCreationDto:
         self.time = time
         self.assessment_id = assessment_id
 
+class QuestionDetailsDto:
+    def __init__(self, **kwargs):
+        valid_keys = ['id', 'question', 'figure', 'choices', 'major_category', 'student_answer', 'student_cri', 'is_for_review', 'time', 'assessment_id', 'datetimecreated', 'datetimeupdated']
+        for key, value in kwargs.items():
+            if key in valid_keys:
+                setattr(self, key, value)
+
 class QuestionUpdationDto:
-    def __init__(self, question=None, figure=None, choices=None, answer=None, major_category=None, student_answer=None, student_cri=None, is_for_review=None, time=None):
+    def __init__(self, question=None, figure=None, choices=None, major_category=None, student_answer=None, student_cri=None, is_for_review=None, time=None):
         self.question = question
         self.figure = figure
         self.choices = choices
-        self.answer = answer
         self.major_category = major_category
         self.student_answer = student_answer
         self.student_cri = student_cri
