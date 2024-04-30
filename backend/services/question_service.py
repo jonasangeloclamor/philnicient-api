@@ -1,6 +1,7 @@
 from backend.repositories.question_repository import create_questions, get_question, get_all_questions, update_question, delete_question, update_multiple_questions, has_question_id, get_questions_by_assessment_id
 from backend.repositories.assessment_repository import has_assessment_id, get_assessment, update_assessment
-from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto
+from backend.repositories.user_repository import is_teacher
+from backend.data_components.dtos import QuestionCreationDto, QuestionUpdationDto, QuestionDetailsDto
 from backend.data_components.mappings import map_question_creation_dto_to_model
 from backend.utils.string_util import StringUtil
 
@@ -49,10 +50,22 @@ def update_multiple_questions_service(question_data_list):
     update_multiple_questions(question_data_list)
 
 def get_question_service(question_id):
-    return get_question(question_id)
+    question = get_question(question_id)
+    if question:
+        question_dict = question.__dict__
+        question_dict.pop('answer', None)
+        return QuestionDetailsDto(**question_dict)
+    else:
+        return None
 
 def get_all_questions_service():
-    return get_all_questions()
+    questions = get_all_questions()
+    question_dtos = []
+    for question in questions:
+        question_dict = question.__dict__
+        question_dict.pop('answer', None)
+        question_dtos.append(QuestionDetailsDto(**question_dict))
+    return question_dtos
 
 def update_question_service(question_id, question_data: QuestionUpdationDto):
     existing_question = get_question(question_id)
@@ -76,5 +89,11 @@ def delete_question_service(question_id):
     
     delete_question(question_id)
 
-def get_questions_by_assessment_id_service(assessment_id):
-    return get_questions_by_assessment_id(assessment_id)
+def get_questions_by_assessment_id_service(assessment_id, user_id):
+    questions = get_questions_by_assessment_id(assessment_id)
+    is_teacher_user = is_teacher(user_id)
+
+    if is_teacher_user:
+        return [question.__dict__ for question in questions]
+    else:
+        return [{k: v for k, v in question.__dict__.items() if k != 'answer'} for question in questions]

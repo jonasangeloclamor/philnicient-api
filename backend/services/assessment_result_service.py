@@ -1,4 +1,4 @@
-from backend.repositories.assessment_result_repository import create_assessment_result, get_assessment_result, get_all_assessment_results, update_assessment_result, get_assessment_result_by_student_id, delete_assessment_result, has_assessment_result_by_student_id
+from backend.repositories.assessment_result_repository import create_assessment_result, get_assessment_result, get_all_assessment_results, update_assessment_result, get_assessment_result_by_student_id, delete_assessment_result, has_assessment_result_by_student_id, get_all_assessment_results_by_class_id
 from backend.repositories.student_repository import has_student_id, is_student_enrolled_in_class
 from backend.repositories.class_repository import get_class_ids_by_teacher_id
 from backend.data_components.dtos import AssessmentResultCreationDto, AssessmentResultUpdationDto
@@ -58,3 +58,6 @@ def get_assessment_result_by_student_id_service(student_id):
 
 def delete_assessment_result_service(assessment_result_id):
     return delete_assessment_result(assessment_result_id)
+
+def get_all_assessment_results_by_class_id_service(class_id):
+    return get_all_assessment_results_by_class_id(class_id)
