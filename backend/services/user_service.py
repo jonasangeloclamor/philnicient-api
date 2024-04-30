@@ -5,7 +5,7 @@ from backend.repositories.student_repository import get_students_by_student_id, 
 from backend.repositories.assessment_repository import get_assessment_id_by_student_id, delete_assessment
 from backend.repositories.question_repository import delete_questions_by_assessment_id
 from backend.repositories.assessment_result_repository import get_assessment_result_by_student_id, delete_assessment_result
-from backend.data_components.dtos import UserCreationDto, UserLoginDto
+from backend.data_components.dtos import UserCreationDto, UserLoginDto, UserDto
 from backend.data_components.mappings import map_user_creation_dto_to_model
 import bcrypt
 import re
@@ -19,13 +19,27 @@ def create_user_service(user_data: UserCreationDto):
     user.password = hashed_password
     user_id = create_user(user)
     user.id = user_id
-    return user
+    user_dict = user.__dict__
+    user_dict.pop('password', None)
+    return UserDto(**user_dict)
 
 def get_user_service(user_id):
-    return get_user(user_id)
+    user = get_user(user_id)
+    if user:
+        user_dict = user.__dict__
+        user_dict.pop('password', None)
+        return UserDto(**user_dict)
+    else:
+        return None
 
 def get_all_users_service():
-    return get_all_users()
+    users = get_all_users()
+    user_dtos = []
+    for user in users:
+        user_dict = user.__dict__
+        user_dict.pop('password', None)
+        user_dtos.append(UserDto(**user_dict))
+    return user_dtos
 
 def get_user_by_username_service(username):
     return get_user_by_username(username)
