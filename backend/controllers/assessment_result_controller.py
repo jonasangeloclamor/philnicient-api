@@ -1,6 +1,7 @@
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from backend.services.assessment_result_service import create_assessment_result_service, get_assessment_result_service, get_all_assessment_results_service, update_assessment_result_service, get_assessment_result_by_student_id_service, delete_assessment_result_service
+from backend.services.assessment_result_service import create_assessment_result_service, get_assessment_result_service, get_all_assessment_results_service, update_assessment_result_service, get_assessment_result_by_student_id_service, delete_assessment_result_service, get_all_assessment_results_by_class_id_service
+from backend.services.class_service import get_class_service
 from backend.data_components.dtos import AssessmentResultCreationDto, AssessmentResultUpdationDto
 from security_config import authorizations
 from backend.utils.auth import role_required
@@ -161,5 +162,29 @@ class AssessmentResultByStudent(Resource):
                 return assessment_result.__dict__, 200
             else:
                 return {'message': 'Assessment result not found for the specified student'}, 404
+        except Exception as e:
+            return {'message': str(e)}, 500
+
+@assessment_result_ns.route('/class/<string:class_id>')
+class AssessmentResultByClass(Resource):
+    @assessment_result_ns.response(200, 'Success')
+    @assessment_result_ns.response(204, 'No Content')
+    @assessment_result_ns.response(500, 'Internal Server Error')
+    @role_required('Teacher', 'Student', 'Admin')
+    @assessment_result_ns.doc(security="jsonWebToken")
+    def get(self, class_id):
+        """
+        Gets all assessment results by class ID.
+        """
+        try:
+            class_info = get_class_service(class_id)
+            if not class_info:
+                return {'message': 'Class not found'}, 404
+        
+            assessment_results = get_all_assessment_results_by_class_id_service(class_id)
+            if assessment_results:
+                return [rst.__dict__ for rst in assessment_results], 200
+            else:
+                return {'message': 'No assessment results found for the specified class'}, 204
         except Exception as e:
             return {'message': str(e)}, 500
