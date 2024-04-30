@@ -8,6 +8,13 @@ class UserCreationDto:
         self.password = password
         self.role = role
 
+class UserDto:
+    def __init__(self, **kwargs):
+        valid_keys = ['id', 'firstname', 'middlename', 'lastname', 'email', 'username', 'role', 'datetimecreated', 'datetimeupdated']
+        for key, value in kwargs.items():
+            if key in valid_keys:
+                setattr(self, key, value)
+
 class UserLoginDto:
     def __init__(self, username_or_email, password):
         self.username_or_email = username_or_email
